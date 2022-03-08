@@ -1,0 +1,10 @@
+F:\SINOSUN_NATIVE\SCP_Studio\SCP_Base\src\main\java\com\sinosun\tchat\communication\ITMockCommunication.java
+
+F:\SINOSUN_NATIVE\SCP_Studio\SCP_Communitcation\src\main\java\com\sinosun\tchat\communication\HttpManagerMock.java
+F:\SINOSUN_NATIVE\SCP_Studio\SCP_Communitcation\src\main\java\com\sinosun\tchat\communication\MockCommunicationManager.java
+
+F:\SINOSUN_NATIVE\SCPUI_Studio\SCP_Browser\src\main\java\com\sinosun\browser\bean\ApiFakerBean.java
+F:\SINOSUN_NATIVE\SCPUI_Studio\SCP_Browser\src\main\java\com\sinosun\browser\beanApiFakerUrlBean.java
+F:\SINOSUN_NATIVE\SCPUI_Studio\SCP_Browser\src\main\java\com\sinosun\browser\commfunction\GetApiFakerFunction.java
+
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>icon/common/gclose_nor</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="20" height="20"></rect>
+    </defs>
+    <g id="icon/common/gclose_nor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="透明度层" transform="translate(0.000000, -0.000000)">
+            <g id="合并形状">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="蒙版"></g>
+                <path d="M10.0226516,2 C10.4092509,2 10.7226516,2.31340068 10.7226516,2.7 L10.722,9.372 L17.3,9.37285108 C17.6865993,9.37285108 18,9.68625175 18,10.0728511 C18,10.4594504 17.6865993,10.7728511 17.3,10.7728511 L10.722,10.772 L10.7226516,17.3 C10.7226516,17.6865993 10.4092509,18 10.0226516,18 C9.63605226,18 9.32265159,17.6865993 9.32265159,17.3 L9.322,10.772 L2.7,10.7728511 C2.31340068,10.7728511 2,10.4594504 2,10.0728511 C2,9.68625175 2.31340068,9.37285108 2.7,9.37285108 L9.322,9.372 L9.32265159,2.7 C9.32265159,2.31340068 9.63605226,2 10.0226516,2 Z" fill="#999999" mask="url(#mask-2)" transform="translate(10.000000, 10.000000) rotate(45.000000) translate(-10.000000, -10.000000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

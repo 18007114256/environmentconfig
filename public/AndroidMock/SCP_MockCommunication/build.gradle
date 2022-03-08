@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(':SCP_Base')
+    compileOnly project(':SCP_Communitcation')
+    compileOnly project(':SCP_MessageBus')
+
+    compileOnly files('../SCP_Communitcation/libs/Volley.jar')
+}
+
+task makeJar(type: Jar, dependsOn: ['assembleRelease']) {
+    archiveName = 'scp_mockcommunication.jar'
+    from('build/intermediates/javac/release/classes')
+    destinationDir = file('../build/libs')
+    exclude('**/BuildConfig.class')
+    exclude('**/BuildConfig\$*.class')
+    exclude('**/R.class')
+    exclude('**/R\$*.class')
+    include('**/*.class')
+}
