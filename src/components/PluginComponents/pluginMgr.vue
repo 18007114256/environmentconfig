@@ -27,7 +27,7 @@
         </div>
         <el-dialog class="pluginMgrDialog" title="新建项目" :visible.sync="dialogVisible">
             <el-input v-model="projectName" placeholder="请输入项目名称" type="text"></el-input>
-            <div class="ipBox">
+            <!-- <div class="ipBox">
                 <el-input
                     class="ipInput"
                     v-model="projectIp"
@@ -35,7 +35,7 @@
                     type="text"
                 ></el-input>
                 <el-button type="primary" @click="syncIp">同步ip</el-button>
-            </div>
+            </div> -->
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -46,14 +46,14 @@
                 ></el-input>
                 <el-button type="primary" @click="selectProject">选择</el-button>
             </div>
-            <el-row>
+            <!-- <el-row>
                 <el-radio size="medium" :border="true" v-model="radio1" label="bizmate"
                     >伴正事</el-radio
                 >
                 <el-radio size="medium" :border="true" v-model="radio1" label="yqt"
                     >银企通</el-radio
                 >
-            </el-row>
+            </el-row> -->
             <!-- <el-row>
                 <el-radio size="medium" :border="true" v-model="radio2" label="mPaas"
                     >mPaas</el-radio
@@ -277,10 +277,10 @@ export default {
                 });
         },
         validateProject() {
-            let re =
-                /^((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))$/;
-            let port = this.projectIp && this.projectIp.split(":")[1];
-            console.log("port", port);
+            // let re =
+            //     /^((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))$/;
+            // let port = this.projectIp && this.projectIp.split(":")[1];
+            // console.log("port", port);
             if (this.projectList.some((item) => item.name == this.projectName)) {
                 this.tostMsg({
                     message: "项目名称不能重复",
@@ -293,19 +293,21 @@ export default {
                     type: "error",
                 });
                 return false;
-            } else if (this.projectIp == "") {
-                this.tostMsg({
-                    message: "ip地址不能为空",
-                    type: "error",
-                });
-                return false;
-            } else if (!re.test(this.projectIp) && !port) {
-                this.tostMsg({
-                    message: "请输入正确的ip地址",
-                    type: "error",
-                });
-                return false;
-            } else if (this.selectPath == "") {
+            } 
+            // else if (this.projectIp == "") {
+            //     this.tostMsg({
+            //         message: "ip地址不能为空",
+            //         type: "error",
+            //     });
+            //     return false;
+            // } else if (!re.test(this.projectIp) && !port) {
+            //     this.tostMsg({
+            //         message: "请输入正确的ip地址",
+            //         type: "error",
+            //     });
+            //     return false;
+            // } 
+            else if (this.selectPath == "") {
                 this.tostMsg({
                     message: "请选择项目路径",
                     type: "error",

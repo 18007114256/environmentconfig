@@ -27,7 +27,7 @@ export default {
         };
     },
     created() {
-        this.titleName ="SCP_MOCK 客户端"
+        this.titleName ="环境配置 客户端"
             // process.env.CURRENT_PRO == "pluginScpmock"
             //     ? "SCP_MOCK 数据管理端"
             //     : "SCP_MOCK 客户端插件";
