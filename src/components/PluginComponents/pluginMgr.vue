@@ -1,6 +1,6 @@
 <template>
     <div class="plugin-home">
-        <div class="plugin-title">
+        <!-- <div class="plugin-title">
             <div>客户端类型选择</div>
             <div>
                 <el-select v-model="value" @change="selectChange" placeholder="请选择">
@@ -13,7 +13,7 @@
                     </el-option>
                 </el-select>
             </div>
-        </div>
+        </div> -->
         <el-divider></el-divider>
         <div class="listBox">
             <div v-if="!projectList.length"><el-empty description="暂无项目"></el-empty></div>
@@ -120,10 +120,10 @@ export default {
             },
             loading: null,
             options: [
-                {
-                    value: "pluginH5",
-                    label: "H5",
-                },
+                // {
+                //     value: "pluginH5",
+                //     label: "H5",
+                // },
             ],
             value: "pluginH5",
             passwordFlag: false,
@@ -159,7 +159,8 @@ export default {
                     label: "Android",
                 });
             }
-            this.options.length = 2;
+            this.options.length = 1;
+            this.selectChange(this.options[0].value);
         },
         initData() {
             this.value = this.pluginType;
@@ -396,7 +397,7 @@ export default {
         }
     }
     .bottomBox {
-        width: calc(100% - 241px);
+        width: calc(100%);
         position: fixed;
         background: #fff;
         bottom: 0;

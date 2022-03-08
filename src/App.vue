@@ -3,9 +3,9 @@
         <div class="appBox">
             <TitleBar></TitleBar>
             <div class="content">
-                <div class="left_chat_list">
+                <!-- <div class="left_chat_list">
                     <LeftMenu></LeftMenu>
-                </div>
+                </div> -->
                 <div class="right_chat_content">
                     <!-- <RightBar></RightBar> -->
                     <router-view v-if="isRouterAlive"></router-view>
@@ -18,13 +18,13 @@
 // @ is an alias to /src
 import "./utils/setUp.js";
 import TitleBar from "@/components/TitleBar/TitleBar.vue";
-import LeftMenu from "@/components/LeftMenu/LeftMenu.vue";
+// import LeftMenu from "@/components/LeftMenu/LeftMenu.vue";
 // import RightBar from "@/components/RightBar/RightBar.vue";
 export default {
     name: "app",
     components: {
         TitleBar,
-        LeftMenu,
+        // LeftMenu,
         // RightBar,
     },
     provide() {

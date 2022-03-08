@@ -14,7 +14,7 @@ const routes = [
         path: "/",
         // name: 'home',
         // component: Home,
-        redirect: "/pluginScpmock",
+        redirect: "/pluginH5",
     },
     {
         path: "/attendance",
