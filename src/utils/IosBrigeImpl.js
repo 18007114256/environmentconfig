@@ -115,7 +115,7 @@ class IosBrigeImpl {
     checkEnv(info) {
         let _this = this;
         let password = info.password;
-        console.log("Iso - checkEnv - ");
+        console.log("iOS - checkEnv - ");
         return new Promise((res, rej) => {
             _res = res;
             _rej = rej;
@@ -178,7 +178,7 @@ class IosBrigeImpl {
         });
     }
     creatProject(info) {
-        console.log("Iso - creatProject - ", info);
+        console.log("iOS - creatProject - ", info);
         let basePath = info.basePath;
         return new Promise((res, rej) => {
             _res = res;
@@ -192,57 +192,64 @@ class IosBrigeImpl {
                     : path.join(__dirname, "./ruby");
 
             let cmdStr = `sh electron.command ${basePath} ${_tostr}`;
-            this.runExec(
-                cmdStr,
-                cmdPath,
-                (data) => {
-                    if (data.indexOf("ele_success") != -1) {
-                        let obj = {
-                            type: true,
-                            code: 200,
-                            msg: data,
-                        };
-                        _res(obj);
-                        console.log("成功", data);
-                    }
-                    if (data.indexOf("ele_fail") != -1) {
-                        let obj = {
-                            type: false,
-                            code: 400,
-                            msg: data,
-                        };
-                        _rej(obj);
-                        console.log("失败", data);
-                    }
-                },
-                (data) => {
-                    if (data.indexOf("ele_fail") != -1) {
-                        let obj = {
-                            type: false,
-                            code: 400,
-                            msg: data,
-                        };
-                        _rej(obj);
-                        console.log("失败", data);
-                    }
-                },
-            );
+            let obj = {
+                type: true,
+                code: 200,
+                msg: cmdPath + cmdStr,
+            }
+            _res(obj);
+            console.log("成功", obj);
+            // this.runExec(
+            //     cmdStr,
+            //     cmdPath,
+            //     (data) => {
+            //         if (data.indexOf("ele_success") != -1) {
+            //             let obj = {
+            //                 type: true,
+            //                 code: 200,
+            //                 msg: data,
+            //             };
+            //             _res(obj);
+            //             console.log("成功", data);
+            //         }
+            //         if (data.indexOf("ele_fail") != -1) {
+            //             let obj = {
+            //                 type: false,
+            //                 code: 400,
+            //                 msg: data,
+            //             };
+            //             _rej(obj);
+            //             console.log("失败", data);
+            //         }
+            //     },
+            //     (data) => {
+            //         if (data.indexOf("ele_fail") != -1) {
+            //             let obj = {
+            //                 type: false,
+            //                 code: 400,
+            //                 msg: data,
+            //             };
+            //             _rej(obj);
+            //             console.log("失败", data);
+            //         }
+            //     },
+            // );
         });
     }
     getProject(id) {
-        console.log("Iso - getProject - ", id);
+        console.log("iOS - getProject - ", id);
     }
     getProjectInfo() {
-        console.log("Iso - getProjectInfo - ");
+        console.log("iOS - getProjectInfo - ");
         let info = {
             interfaceList: JSON.parse(getStorage("projectMap-pluginIos") || "{}"),
         };
         return info;
     }
     setProjectInfo(info) {
-        console.log("Iso - setProjectInfo - ", info);
+        console.log("iOS - setProjectInfo - ", info);
         let { mockFlag, interfaceList, id } = info;
-        console.log("Iso - setProjectInfo - ", mockFlag);
+        console.log("iOS - setProjectInfo - ", mockFlag);
         let projectList = JSON.parse(getStorage("projectList-pluginIos") || "[]");
         let setInfo = projectList
             .filter((item) => item.id == id)
@@ -326,7 +333,7 @@ class IosBrigeImpl {
     }
 
     deleteLocalConfig(projectList) {
-        console.log("Iso - deleteLocalConfig - ");
+        console.log("ios - deleteLocalConfig - ");
         let projectMap = JSON.parse(getStorage("projectMap-pluginIos") || "{}");
         let keyList = Object.keys(projectMap);
         let obj = (projectList || [])
