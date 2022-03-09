@@ -127,55 +127,61 @@ class AndroidBrigeImpl {
     }
     creatProject(info) {
         console.log("Android - creatProject - ", info);
-        let basePath = info.basePath;
+        // let basePath = info.basePath;
         _vue = info._vue;
         return new Promise((res, rej) => {
             _res = res;
             _rej = rej;
-            _this.checkMockThen(basePath).then((resData) => {
-                if (resData.type) {
+            // _this.checkMockThen(basePath).then((resData) => {
+                // if (resData.type) {
                     let obj = {
                         type: true,
                         code: 200,
                     };
                     _res(obj);
-                    console.log("成功", resData);
-                } else {
-                    _this.iPythonThen(basePath).then((pythonData) => {
-                        if (pythonData.type) {
-                            _this.doCreatProject(basePath).then((thenData) => {
-                                if (thenData.type) {
-                                    _this.doCompileAAR(basePath).then((compileAAR) => {
-                                        if (compileAAR.type) {
-                                            _this.copyArrThen(basePath).then((cpArrData) => {
-                                                if (cpArrData.type) {
-                                                    _this
-                                                        .doSetMockFlag(basePath)
-                                                        .then((setMockFlag) => {
-                                                            if (setMockFlag.type) {
-                                                                _res(setMockFlag);
-                                                            } else {
-                                                                _rej(setMockFlag);
-                                                            }
-                                                        });
-                                                } else {
-                                                    _rej(cpArrData);
-                                                }
-                                            });
-                                        } else {
-                                            _rej(compileAAR);
-                                        }
-                                    });
-                                } else {
-                                    _rej(thenData);
-                                }
-                            });
-                        } else {
-                            _rej(pythonData);
-                        }
-                    });
-                }
-            });
+                    // console.log("成功", resData);
+                // } else {
+                //     let obj = {
+                //         type: false,
+                //         code: 400,
+                //     };
+                //     _res(obj);
+                //     console.log("失败", resData);
+                    // _this.iPythonThen(basePath).then((pythonData) => {
+                    //     if (pythonData.type) {
+                    //         _this.doCreatProject(basePath).then((thenData) => {
+                    //             if (thenData.type) {
+                    //                 _this.doCompileAAR(basePath).then((compileAAR) => {
+                    //                     if (compileAAR.type) {
+                    //                         _this.copyArrThen(basePath).then((cpArrData) => {
+                    //                             if (cpArrData.type) {
+                    //                                 _this
+                    //                                     .doSetMockFlag(basePath)
+                    //                                     .then((setMockFlag) => {
+                    //                                         if (setMockFlag.type) {
+                    //                                             _res(setMockFlag);
+                    //                                         } else {
+                    //                                             _rej(setMockFlag);
+                    //                                         }
+                    //                                     });
+                    //                             } else {
+                    //                                 _rej(cpArrData);
+                    //                             }
+                    //                         });
+                    //                     } else {
+                    //                         _rej(compileAAR);
+                    //                     }
+                    //                 });
+                    //             } else {
+                    //                 _rej(thenData);
+                    //             }
+                    //         });
+                    //     } else {
+                    //         _rej(pythonData);
+                    //     }
+                    // });
+                // }
+            // });
         });
     }
     closeFn(time, msg) {
@@ -237,7 +243,7 @@ class AndroidBrigeImpl {
                         // res(obj);
                         // console.log("失败", data);
                     }
-                    if (data.indexOf("ele_mock_exsits") != -1) {
+                    if (data.indexOf("ele_Python_exsits") != -1) {
                         let obj = {
                             type: true,
                             code: 200,
@@ -245,15 +251,23 @@ class AndroidBrigeImpl {
                         res(obj);
                         console.log("成功", data);
                     }
-                    if (data.indexOf("ele_mock_then") != -1) {
-                        let obj = {
-                            type: false,
-                            code: 404,
-                            msg: "当前工程不存在插件代码，即将进行安装...",
-                        };
-                        res(obj);
-                        console.log("失败", data);
-                    }
+                    // if (data.indexOf("ele_mock_exsits") != -1) {
+                    //     let obj = {
+                    //         type: true,
+                    //         code: 200,
+                    //     };
+                    //     res(obj);
+                    //     console.log("成功", data);
+                    // }
+                    // if (data.indexOf("ele_mock_then") != -1) {
+                    //     let obj = {
+                    //         type: false,
+                    //         code: 404,
+                    //         msg: "当前工程不存在插件代码，即将进行安装...",
+                    //     };
+                    //     res(obj);
+                    //     console.log("失败", data);
+                    // }
                 },
                 (data) => {
                     console.log("data-stderr", data);

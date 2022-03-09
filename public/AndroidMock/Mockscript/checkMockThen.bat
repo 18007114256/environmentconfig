@@ -7,8 +7,8 @@ if %errorlevel%==0 (
 	
 	echo "check mock is exsits "
 	rem 1°¢œ»…æ≥˝mock≈‰÷√–≈œ¢
-	python check_mock_flag.py %projectRootPath%
-
+	rem python check_mock_flag.py %projectRootPath%
+	print("ele_Python_exsits")
 	echo "---check mock flag completed---"
 ) else (
 	echo ele_python_not_installed Python not installed, Please Install Python first...

@@ -1,74 +1,59 @@
 <template>
-    <div class="project-detail-pages">
-        <div class="mockTitle">
-            <div class="title-left">{{ projectName }}</div>
-            <div class="title-right">
-                开启挡板功能
-                <el-switch v-model="mockFlag" active-color="#409EFF" inactive-color="#DCDFE6">
-                </el-switch>
+    <div class="plugin-home">
+        <el-divider></el-divider>
+        <div class="listBox">
+            <div v-if="!environmentList.length"><el-empty description="暂无环境"></el-empty></div>
+            <div class="listItem" v-for="(item, index) in environmenttList" :key="index">
+                <div class="itemName" @click="dialogVisible1 = true">{{ item.name }}</div>
+                <!-- <i class="el-icon-close" @click="preDelete(item.id)"></i> -->
             </div>
         </div>
-        <div class="mockBody">
-            <div class="mockBody-top">
+        <div class="bottomBox">
+            <el-button @click="goBack">  返回  </el-button>
+            <el-button type="primary" @click="dialogVisible = true">新建环境</el-button>
+        </div>
+
+        <el-dialog class="pluginMgrDialog" title="新建环境" :visible.sync="dialogVisible">
+            <el-input v-model="environmentName" placeholder="请输入环境名称" type="text"></el-input>
+            <div class="selectProject">
                 <el-input
-                    class="projectIp"
-                    :value="projectIp"
+                    class="selectPath"
+                    v-model="selectPath"
                     :disabled="true"
+                    placeholder="请选择环境路径"
                     type="text"
                 ></el-input>
-                <!-- <el-tag class="info" type="info">与数据管理端同步</el-tag> -->
-                <!-- <el-button type="primary" @click="dialogVisible = true">新增接口</el-button> -->
-
-                <el-button type="success" @click="dialogVisible = true">导入接口</el-button>
-                <!-- <el-button type="success" icon=" el-icon-upload" circle @click="importData"></el-button> -->
-                <el-button type="primary" @click="showSyncAndGetConfig">同步接口信息</el-button>
+                <el-button type="primary" @click="selectProject">选择</el-button>
             </div>
-            <el-divider></el-divider>
-            <div class="interfaceList">
-                <div v-if="!interfaceList.length"><el-empty description="暂无接口"></el-empty></div>
-                <div class="listItem" v-for="(item, index) in interfaceList" :key="index">
-                    <!-- <div class="itemName" :title="item.name">{{ item.name }}</div> -->
-                    <el-checkbox v-model="item.checked" :label="item.name"></el-checkbox>
-                    <!-- <i class="el-icon-close" @click="preDelete(item.name)"></i> -->
-                </div>
-            </div>
-        </div>
 
-        <el-dialog class="pluginMgrDialog" title="导入接口" :visible.sync="dialogVisible">
-            <el-tooltip class="tooltip" effect="dark" placement="top">
-                <div slot="content">
-                    <div class="content-top">
-                        {{ `请选择xlsx类型文件` }}
-                    </div>
-                </div>
-                <input id="file" type="file" />
-            </el-tooltip>
             <span slot="footer" class="dialog-footer">
                 <el-button class="btn" type="danger" @click="dialogVisible = false"
                     >关 闭</el-button
                 >
-                <el-button class="btn" type="primary" @click="importData(0)">新 增</el-button>
-                <el-button class="btn" type="primary" @click="importData(1)">覆 盖</el-button>
+                <el-button class="btn" type="primary" @click="addEnvironment">创 建</el-button>
             </span>
         </el-dialog>
 
-        <el-dialog class="pluginMgrDialog" title="选择工程" :visible.sync="selectFlag">
-            <div class="listItem" v-for="(item, index) in project" :key="index">
-                <!-- <div class="itemName" :title="item.name">{{ item.name }}</div> -->
-                <el-checkbox v-model="item.checked" :label="item.name"></el-checkbox>
-                <!-- <i class="el-icon-close" @click="preDelete(item.name)"></i> -->
+        <el-dialog class="pluginMgrDialog" title="配置环境" :visible.sync="dialogVisible1">
+            <el-input v-model="environmentName" :disabled="true" type="text"></el-input>
+            <div class="selectProject">
+                <el-input
+                    class="selectPath"
+                    v-model="selectPath1"
+                    :disabled="true"
+                    placeholder="请选择环境路径"
+                    type="text"
+                ></el-input>
+                <el-button type="primary" @click="selectProject">选择</el-button>
             </div>
+
             <span slot="footer" class="dialog-footer">
-                <el-button class="btn" type="danger" @click="selectFlag = false">取 消</el-button>
-                <el-button class="btn" type="primary" @click="syncData(0)">新 增</el-button>
-                <el-button class="btn" type="primary" @click="syncData(1)">覆 盖</el-button>
+                <el-button class="btn" type="danger" @click="dialogVisible1 = false"
+                    >关 闭</el-button
+                >
+                <el-button class="btn" type="primary" @click="modifyEnvironment">创 建</el-button>
             </span>
         </el-dialog>
-
-        <div class="bottomBtn">
-            <el-button @click="goBack">返回</el-button>
-            <el-button type="primary" @click="saveMock">保存</el-button>
-        </div>
     </div>
 </template>
 <script>
@@ -85,8 +70,13 @@ export default {
     },
     data() {
         return {
+            environmentList: [],
+            environmentName: "",
+            selectPath: "",
+            selectPath1: "",
             mockFlag: true,
             dialogVisible: false,
+            dialogVisible1: false,
             selectFlag: false,
             projectName: "",
             projectIp: "",
@@ -106,7 +96,7 @@ export default {
     created() {
         let { info } = this.$route.query;
         this.currentId = info.id;
-        this.projectName = info.name;
+        // this.projectName = info.name;
         this.projectIp = info.ip;
         this.projectPath = info.basePath;
         this.product = info.product;
@@ -118,6 +108,54 @@ export default {
         this.initData();
     },
     methods: {
+        addEnvironment() {
+            // if (this.validateProject()) {
+            //     this.curId++;
+            //     setStorage("curId", this.curId);
+            //     let project = {
+            //         id: this.curId,
+            //         name: this.projectName,
+            //         ip: this.projectIp,
+            //         basePath: this.selectPath,
+            //         product: this.platformMap[this.radio1],
+            //         framework: this.platformMap[this.radio2],
+            //         _vue: this,
+            //         password: this.openPassword,
+            //     };
+            //     this.loadingFn("项目创建中请稍等...");
+            //     window.NativeBrige.creatProject(project)
+            //         .then((res) => {
+            //             delete project._vue;
+            //             this.projectList.push(project);
+            //             setStorage(`projectList-${this.value}`, JSON.stringify(this.projectList));
+            //             this.loading.close();
+            //             console.log("pluginMgr.vue - addProject - res", res);
+            //             this.tostMsg({
+            //                 message: "创建成功",
+            //             });
+            //             this.dialogVisible = false;
+            //         })
+            //         .catch((err) => {
+            //             if (err.type == "password") {
+            //                 this.getPassword();
+            //                 return;
+            //             }
+            //             console.log("pluginMgr.vue - addProject - err", err);
+            //             this.loading.close();
+            //             this.tostMsg({
+            //                 message: `创建失败：${err.msg}`,
+            //                 type: "error",
+            //                 duration: "10000",
+            //             });
+            //             this.dialogVisible = false;
+            //         });
+            // }
+            this.dialogVisible = false;
+        },
+        modifyEnvironment() {
+
+            this.dialogVisible1 = false;
+        },
         importData(type) {
             let _this = this;
             let fileObj = document.getElementById("file").files[0];
@@ -246,31 +284,7 @@ export default {
                 this.selectFlag = false;
             });
         },
-        // preDelete(name) {
-        //     this.deleteName = name;
-        //     this.selectFlag = true;
-        // },
-        // deleteItem() {
-        //     let name = this.deleteName;
-        //     this.interfaceList = this.interfaceList.filter((item) => item.name != name);
-        //     this.projectInfoMap.interfaceList[this.currentId] = this.interfaceList;
-        //     setStorage("projectMap", JSON.stringify(this.projectInfoMap.interfaceList));
-        //     this.selectFlag = false;
-        //     this.dataChange = true;
-        // },
-        // addInterface() {
-        //     if (this.validateInterface()) {
-        //         let interfaceObj = {
-        //             name: this.interfaceName,
-        //         };
-        //         this.interfaceList.push(interfaceObj);
-        //         this.projectInfoMap.interfaceList[this.currentId] = this.interfaceList;
-        //         setStorage("projectMap", JSON.stringify(this.projectInfoMap.interfaceList));
-        //         this.interfaceName = "";
-        //         this.dialogVisible = false;
-        //         this.dataChange = true;
-        //     }
-        // },
+
         validateInterface() {
             if (this.interfaceList.some((item) => item.name == this.interfaceName)) {
                 this.tostMsg({
@@ -376,92 +390,99 @@ export default {
 };
 </script>
 <style lang="less">
-.project-detail-pages {
-    padding: 20px;
-    .mockTitle {
+.plugin-home {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 50px 30px;
+    overflow: scroll;
+    height: calc(100vh - 110px);
+    .plugin-title {
         display: flex;
         justify-content: space-between;
-    }
-    .mockBody {
-        padding: 10px 0;
-        .el-divider {
-            margin: 10px 0;
+        align-items: center;
+        .el-select {
+            width: 100px;
         }
-        &-top {
+    }
+    .el-divider--horizontal {
+        margin: 10px 0;
+    }
+    .listBox {
+        padding: 0 20px 80px 20px;
+        .listItem {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            .itemName {
+                width: 100%;
+                text-align: center;
+                cursor: pointer;
+            }
+            i {
+                cursor: pointer;
+            }
+        }
+    }
+    .bottomBox {
+        width: calc(100%);
+        position: fixed;
+        background: #fff;
+        bottom: 0;
+        right: 0;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        z-index: 10;
+    }
+}
+.pluginMgrDialog {
+    .el-dialog {
+        width: 90% !important;
+        .el-dialog__body {
+            & > div {
+                margin-bottom: 10px;
+            }
+            .el-row {
+                display: flex;
+                justify-content: flex-start;
+            }
+            .el-radio {
+                min-width: 100px;
+                display: flex;
+                justify-content: flex-start;
+            }
+        }
+        .dialog-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            .btn {
+                width: 45%;
+                max-width: 200px;
+            }
+        }
+        .ipBox {
+            display: flex;
+            justify-content: space-between;
+            .ipInput {
+                margin-right: 18px;
+            }
+        }
+        .selectProject {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            .info {
-                margin-right: 10px;
+            .selectPath {
+                // padding: 10px 10px 10px 16px;
+                // border-radius: 4px;
+                // border: 1px solid #dcdfe6;
+                width: 100%;
+                margin: 0 10px 0 0;
+                text-align: left;
+                min-height: 18px;
             }
-            .projectIp {
-                margin-right: 10px;
-            }
-        }
-        .interfaceList {
-            overflow: scroll;
-            padding-right: 10px;
-            height: calc(100vh - 240px);
-            .listItem {
-                display: flex;
-                align-items: center;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
-                margin-bottom: 10px;
-                position: relative;
-                .itemName {
-                    user-select: text;
-                    width: 90%;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    text-align: left;
-                    font-size: 12px;
-                }
-                i {
-                    position: absolute;
-                    top: 50%;
-                    right: 10px;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                }
-            }
-        }
-    }
-    .bottomBtn {
-        position: fixed;
-        width: calc(100% - 241px);
-        right: 0;
-        bottom: 20px;
-        .el-button {
-            min-width: 150px;
-        }
-    }
-
-    .listItem {
-        display: flex;
-        align-items: center;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
-        position: relative;
-        .itemName {
-            user-select: text;
-            width: 90%;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            text-align: left;
-            font-size: 12px;
-        }
-        i {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
         }
     }
 }
