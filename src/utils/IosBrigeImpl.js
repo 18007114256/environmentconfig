@@ -308,7 +308,7 @@ class IosBrigeImpl {
 
     runExec(cmdStr, cmdPath, stdoutCB, stderrCB, closeCB = () => {}) {
         let workerProcess = exec(cmdStr, { cwd: cmdPath });
-        // 打印正常的后台可执行程序输出
+        // 打印正常的后台可执行程序输出 
         workerProcess.stdout.on("data", function (data) {
             console.log("runExec ==> stdout: " + data);
             stdoutCB(data);
