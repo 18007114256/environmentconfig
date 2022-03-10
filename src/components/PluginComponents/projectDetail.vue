@@ -35,7 +35,7 @@
         </el-dialog>
 
         <el-dialog class="pluginMgrDialog" title="配置环境" :visible.sync="dialogVisible1">
-            <el-input v-model="environmentName" :disabled="true" type="text"></el-input>
+            <el-input v-model="environmentName1" :disabled="true" type="text"></el-input>
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -51,7 +51,7 @@
                 <el-button class="btn" type="danger" @click="dialogVisible1 = false"
                     >关 闭</el-button
                 >
-                <el-button class="btn" type="primary" @click="modifyEnvironment">创 建</el-button>
+                <el-button class="btn" type="primary" @click="modifyEnvironment">配 置</el-button>
             </span>
         </el-dialog>
     </div>
@@ -73,6 +73,7 @@ export default {
         return {
             environmentList: [],
             environmentName: "",
+            environmentName1: "",
             selectPath: "",
             selectPath1: "",
             mockFlag: true,
@@ -114,7 +115,7 @@ export default {
     },
     methods: {
         envClick(data) {
-            this.environmentName = data;
+            this.environmentName1 = data;
             this.dialogVisible1 = true;
         },
         selectProject() {
