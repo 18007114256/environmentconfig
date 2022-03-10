@@ -71,6 +71,9 @@ class NativeBrige {
     getProjectInfo(info) {
         return this.nativeBrigeImpl.getProjectInfo(info);
     }
+    getEnvironmentList(info) {
+        return this.nativeBrigeImpl.getEnvironmentList(info);
+    }
     setProjectInfo(info) {
         return new Promise((res, rej) => {
             this.nativeBrigeImpl

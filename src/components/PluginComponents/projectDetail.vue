@@ -3,8 +3,8 @@
         <el-divider></el-divider>
         <div class="listBox">
             <div v-if="!environmentList.length"><el-empty description="暂无环境"></el-empty></div>
-            <div class="listItem" v-for="(item, index) in environmenttList" :key="index">
-                <div class="itemName" @click="dialogVisible1 = true">{{ item.name }}</div>
+            <div class="listItem" v-for="(item, index) in environmentList" :key="index">
+                <div class="itemName" @click="envClick(item)">{{ item }}</div>
                 <!-- <i class="el-icon-close" @click="preDelete(item.id)"></i> -->
             </div>
         </div>
@@ -44,7 +44,7 @@
                     placeholder="请选择环境路径"
                     type="text"
                 ></el-input>
-                <el-button type="primary" @click="selectProject">选择</el-button>
+                <el-button type="primary" @click="selectProject1">选择</el-button>
             </div>
 
             <span slot="footer" class="dialog-footer">
@@ -61,6 +61,7 @@ import { setStorage } from "../../utils/commonUtils.js";
 import { getConfig } from "../../utils/editConfig.js";
 import { mapState } from "vuex";
 import XLSX from "xlsx";
+const dialog = window.require("electron").remote.dialog;
 // const _ = window.require("lodash");
 export default {
     computed: {
@@ -103,11 +104,51 @@ export default {
         this.framework = info.framework;
         this.projectInfoMap = window.NativeBrige.getProjectInfo();
         this.interfaceList = this.projectInfoMap.interfaceList[this.currentId] || [];
+        //获取项目初始环境列表
+        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+            this.environmentList = res.split("-Env-");
+        });
     },
     beforeMount() {
         this.initData();
     },
     methods: {
+        envClick(data) {
+            this.environmentName = data;
+            this.dialogVisible1 = true;
+        },
+        selectProject() {
+                dialog
+                .showOpenDialog({
+                    properties: ["openFile", "openDirectory", "multiSelections"],
+                    title: "请选择文件夹",
+                })
+                .then((res) => {
+                    if (!res.canceled) {
+                        let basePath = res.filePaths[0];
+                        this.selectPath = basePath;
+                    }
+                })
+                .catch((req) => {
+                    console.log(req);
+                });
+        },
+        selectProject1() {
+                dialog
+                .showOpenDialog({
+                    properties: ["openFile", "openDirectory", "multiSelections"],
+                    title: "请选择文件夹",
+                })
+                .then((res) => {
+                    if (!res.canceled) {
+                        let basePath = res.filePaths[0];
+                        this.selectPath1 = basePath;
+                    }
+                })
+                .catch((req) => {
+                    console.log(req);
+                });
+        },
         addEnvironment() {
             // if (this.validateProject()) {
             //     this.curId++;

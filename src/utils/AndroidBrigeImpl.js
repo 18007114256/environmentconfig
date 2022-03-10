@@ -452,6 +452,42 @@ class AndroidBrigeImpl {
         });
     }
 
+    //获取初始环境列表脚本
+    getEnvironmentList(basePath) {
+        console.log("Android - getEnvironmentList - ");
+        let cmdPath = _this.getScriptPath();
+        return new Promise((res) => {
+            _this.runExec(
+                `find_environment.bat ${basePath}`,
+                // cmdStr,
+                cmdPath + "\\Mockscript",
+                (data) => {
+                    console.log("data-env", data);            
+                    // if (list.length != 0 && list[0].indexOf("Env") != -1) {
+                    //     res(list);
+                    //     console.log("成功", data);
+                    // }
+                    if (data.indexOf("-Env-") != -1) {
+                        res(data);
+                        console.log("成功", data);
+                    }
+                },
+                (data) => {
+                    console.log("data-stderr", data);
+                    if (data.indexOf("ele_fail") != -1) {
+                        let obj = {
+                            type: false,
+                            code: 400,
+                            msg: "创建项目失败，请按照操作手册安装环境",
+                        };
+                        _rej(obj);
+                        console.log("失败", data);
+                    }
+                },
+            );
+        });
+    }
+
     doSetMockFlag(basePath) {
         let cmdPath = _this.getScriptPath();
         return new Promise((res) => {
