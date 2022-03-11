@@ -195,9 +195,27 @@ export default {
             this.dialogVisible = false;
         },
         modifyEnvironment() {
-
-            this.dialogVisible1 = false;
+            this.loadingFn("环境配置中请稍等...");
+                window.NativeBrige.modifyEnv(this.selectPath1, this.projectPath, this.environmentName1)
+                    .then((res) => {
+                        console.log("modifyEnvironment - res", res);
+                        this.loading.close();
+                        this.tostMsg({
+                            message: "配置完成",
+                        });
+                        this.dialogVisible1 = false;
+                    })
+                    .catch((err) => {
+                        this.loading.close();
+                        this.tostMsg({
+                            message: `配置失败：${err.msg}`,
+                            type: "error",
+                            duration: "10000",
+                        });
+                        this.dialogVisible1 = false;
+                    });
         },
+
         importData(type) {
             let _this = this;
             let fileObj = document.getElementById("file").files[0];

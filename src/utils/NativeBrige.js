@@ -53,6 +53,19 @@ class NativeBrige {
             });
         });
     }
+    modifyEnv(envPath, projectPath, envName) {
+            return new Promise((res, rej) => {
+                    this.nativeBrigeImpl
+                        .modifyEnv(envPath, projectPath, envName)
+                        .then((data) => {
+                            res(data);
+                        })
+                        .catch((err) => {
+                            rej(err);
+                        });
+
+            });
+    }
     getProject(id) {
         return this.nativeBrigeImpl.getProject(id);
     }

@@ -184,6 +184,40 @@ class AndroidBrigeImpl {
             // });
         });
     }
+    modifyEnv(envPath, projectPath, envName) {
+        console.log("Android - modifyEnv - ", envPath + projectPath + envName);
+        let cmdPath = _this.getScriptPath();
+        return new Promise((res) => {
+            _this.runExec(
+                `setEnv.bat ${envPath} ${projectPath} ${envName}`,
+                // cmdStr,
+                cmdPath + "\\Mockscript",
+                (data) => {
+                    console.log("data-modifyEnv", data);
+                    if (data.indexOf("set env end") != -1) {
+                        let obj = {
+                            type: true,
+                            code: 200,
+                        };
+                        res(obj);
+                        console.log("成功", data);
+                    }
+                },
+                (data) => {
+                    console.log("data-stderr", data);
+                    if (data.indexOf("ele_fail") != -1) {
+                        let obj = {
+                            type: false,
+                            code: 400,
+                            msg: "配置失败",
+                        };
+                        _rej(obj);
+                        console.log("失败", data);
+                    }
+                },
+            );
+        });
+    }
     closeFn(time, msg) {
         let t = time;
         _vue.loading && _vue.loading.close();
