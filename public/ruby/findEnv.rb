@@ -1,20 +1,26 @@
 #!/usr/bin/ruby -w
 # -*- coding: UTF-8 -*-
+require File.expand_path('../filecontrol',__FILE__)
 
 src = ARGV[0].dup
-# puts src
-lastPath = "/TChat/TChat/ProdctionConfigEtc/ProdcutionEnvConfig.m"
+# lastPath = "/TChat/TChat/ProdctionConfigEtc/ProdcutionEnvConfig.m"
+fileName = "ProdcutionEnvConfig.m" #环境配置文件
+
+filecontrol = FileControl.new;
+
+filePaths = filecontrol.searchPath(src,fileName) #查找文件并返回目录列表
+
 array = []
-IO.foreach(src + lastPath) do |line|
-    line if line =~/setServerConfigEqual_/ #输出匹配到了'abc'的所在行 
+tempArr = []
+# 查找工程中现有的环境
+IO.foreach(filePaths[0]) do |line|
+    line if line =~/setServerConfigEqual_/ 
     if line.index '(void)setServerConfigEqual_'
         array.push(line.reverse[2...3].reverse)
     else
         # puts ("error")
     end
 end
-
-tempArr = []
 
 for value in array do
     case value
@@ -38,4 +44,3 @@ for value in array do
  end
 
 puts string = tempArr.join("-Env-")
-# return string
