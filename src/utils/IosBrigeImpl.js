@@ -246,6 +246,43 @@ class IosBrigeImpl {
         };
         return info;
     }
+    getEnvironmentList(basePath) {
+        console.log("iOS - getEnvironmentList -");
+        let cmdStr = `ruby findEnv.rb '${basePath}'`;
+        let num = __dirname.indexOf("node_modules");
+        let devSrc = __dirname.slice(0, num - 1);
+        let DevSinosun = path.join(devSrc, "./public/ruby");
+        let cmdPath =
+            process.env.NODE_ENV === "development"
+                ? DevSinosun
+                : path.join(__dirname, "./ruby");
+        return new Promise((res) => {
+            this.runExec(
+                cmdStr,
+                cmdPath,
+                (data) => {
+                    console.log("iOS-env-", data);            
+ 
+                    if (data.indexOf("-Env-") != -1) {
+                        res(data);
+                        console.log("读取环境成功", data);
+                    }
+                },
+                (data) => {
+                    console.log("data-stderr", data);
+                    if (data.indexOf("ele_fail") != -1) {
+                        let obj = {
+                            type: false,
+                            code: 400,
+                            msg: "创建项目失败，请按照操作手册安装环境",
+                        };
+                        _rej(obj);
+                        console.log("失败", data);
+                    }
+                },
+            );
+        });
+    }
     setProjectInfo(info) {
         console.log("iOS - setProjectInfo - ", info);
         let { mockFlag, interfaceList, id } = info;
