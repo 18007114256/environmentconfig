@@ -1,7 +1,90 @@
 import sys
 import os
+import shutil
 
-#读取MainApp.java
+#读取特定目录
+def getPath( rootPath, tagetPathName ):
+    for root, dirs, files in os.walk(rootPath):
+        for name in dirs:
+            if name == tagetPathName:
+                print(os.path.join(root, name))
+                taget_path = os.path.join(root, name)
+                break
+    return taget_path
+
+#读取特定文件
+def getFile( rootPath, tagetFileName ):
+    for root, dirs, files in os.walk(rootPath):
+        for name in files:
+            if name == tagetFileName:
+                print(os.path.join(root, name))
+                taget_file = os.path.join(root, name)
+                break
+    return taget_file
+
+#读取yml文件中的特定值
+def readFileValue( filePath, tagetValueName ):
+    with open(filePath, "r", encoding="utf-8-sig") as f1:
+        fcontent = f1.readlines()
+        for line_num, line_content in enumerate(fcontent):
+            sub_str_index = line_content.find(tagetValueName)
+            if sub_str_index != -1:
+                print("---在第{}行{}列".format(line_num, sub_str_index))
+                break
+    #读取指定行：
+    lines=[]
+    f=open(filePath,'r', encoding="utf-8-sig")  #your path!
+    for line in f:
+        lines.append(line)
+    f.close()
+    data = lines[line_num]
+    s = data[data.index(":") + 1:]
+    result = s.strip()
+    print(result)
+    if(len(result) == 0) :
+        print("-Env-{}is null".format(tagetValueName))
+    return result
+
+#修改mainApp中的特定值
+def modifyValue( fileName, old, new ):
+    with open(fileName, "r", encoding="utf-8-sig") as f1:
+        fcontent = f1.readlines()
+        for line_num, line_content in enumerate(fcontent):
+            sub_str_index = line_content.find(old)
+            if sub_str_index != -1:
+                print("---在第{}行{}列".format(line_num, sub_str_index))
+                break
+    #读取指定行：
+    lines=[]
+    f=open(fileName,'r', encoding="utf-8-sig")  #your path!
+    for line in f:
+        lines.append(line)
+    f.close()
+    #替换值
+    data = lines[line_num]
+    result=[]
+    result = data.split("\"" , 2)
+    if(result) :
+        lines[line_num] = lines[line_num].replace(result[1],new)
+        print(lines[line_num])
+    #重新写入文件
+    s=''.join(lines)
+    f=open(fileName,'w+', encoding='utf-8')
+    f.write(s)
+    f.close()
+    del lines[:]                      #清空列表
+    del result[:]                      #清空列表
+    return
+
+#读取环境gradle      
+for root, dirs, files in os.walk(sys.argv[2]):
+    for name in files:
+        if name == sys.argv[3] + ".gradle":
+            print(os.path.join(root, name))
+            gradle_file = os.path.join(root, name)
+            break
+
+#读取src
 for root, dirs, files in os.walk(sys.argv[2]):
     for name in dirs:
         if name == "src":
@@ -22,7 +105,65 @@ for root, dirs, files in os.walk(src_env_path):
             print(os.path.join(root, name))
             mainApp_file = os.path.join(root, name)
             break
+
+#读取pem文件
+for root, dirs, files in os.walk(sys.argv[1]):
+    for name in files:
+        if name.find("param.pem") != -1:
+            print(os.path.join(root, name))
+            pem_name = name
+            pem_file = os.path.join(root, name)
+            break
             
+#将pem文件拷贝到assets下
+new_pem_path = getPath( src_env_path, "assets" )
+new_pem_path_file = new_pem_path + "\\" + pem_name
+shutil.copy(pem_file, new_pem_path_file)
+
+#修改mainApp中的pem配置
+modifyValue(mainApp_file, "ExtendConstants.HTTP_SECRET_FILE", pem_name)
+modifyValue(mainApp_file, "ExtendConstants.MSTP_SECRET_FILE", pem_name)
+
+#读取安全键盘秘钥文件
+for root, dirs, files in os.walk(sys.argv[1]):
+    for name in files:
+        if name.find("safeKeyboard") != -1:
+            print(os.path.join(root, name))
+            safeKey_name = name
+            safeKey_file = os.path.join(root, name)
+            break
+            
+#将安全键盘秘钥文件拷贝到assets下
+new_safeKey_path = getPath( src_env_path, "assets" )
+new_safeKey_path_file = new_safeKey_path + "\\keyboardPublicKey"
+new_safeKey_path_file1 = new_safeKey_path + "\\softCertTsSM2PublicKey"
+shutil.copy(safeKey_file, new_safeKey_path_file)
+shutil.copy(safeKey_file, new_safeKey_path_file1)
+
+#读取tid并修改
+#读取yml文件
+for root, dirs, files in os.walk(sys.argv[1]):
+    for name in files:
+        if name.find(".yml") != -1:
+            print(os.path.join(root, name))
+            yml_name = name
+            yml_file = os.path.join(root, name)
+            break
+tid = readFileValue(yml_file, "tid:")
+modifyValue(mainApp_file, "ExtendConstants.APP_TID", tid)
+
+bsl_sm2_kid = readFileValue(yml_file, "bsl_sm2_kid:")
+modifyValue(mainApp_file, "ExtendConstants.PRIVATE_BSL_KID", bsl_sm2_kid)
+
+bsl_sm2_public_key = readFileValue(yml_file, "bsl_sm2_public_key:")
+modifyValue(mainApp_file, "ExtendConstants.PRIVATE_BSL_KEY", bsl_sm2_public_key)
+
+#读取包名
+#修改.gradle文件中的包名
+pName = readFileValue(yml_file, "android_package_name:")
+modifyValue(gradle_file, "applicationId", pName)
+modifyValue(gradle_file, "applicationIdLowerCase", pName)
+
 #读取域名端口
 for root, dirs, files in os.walk(sys.argv[1]):
     for name in files:
@@ -30,7 +171,7 @@ for root, dirs, files in os.walk(sys.argv[1]):
             print(os.path.join(root, name))
             txt_file = os.path.join(root, name)
             break
-			
+
 with open(txt_file, "r", encoding="utf-8-sig") as f1:
     fcontent = f1.readlines()
     for line_num, line_content in enumerate(fcontent):
@@ -59,37 +200,99 @@ else:
 	print("-Env-host and port is null")
 	hostName = ""
 	portName = ""
-print(result)
-del lines[:]                      #清空列表
-del result[:]                      #清空列表
 print("-Env-" + hostName)
 print("-Env-" + portName)
+print(result)
 
-#打开MainApp.java 找到需要修改的行
-with open(mainApp_file, "r", encoding="utf-8-sig") as f1:
+#读取realm
+with open(txt_file, "r", encoding="utf-8-sig") as f1:
     fcontent = f1.readlines()
     for line_num, line_content in enumerate(fcontent):
-        sub_str_index = line_content.find("String privateServerHost")#找到域名行
+        sub_str_index = line_content.find("realm")
         if sub_str_index != -1:
             print("---在第{}行{}列".format(line_num, sub_str_index))
             break
-
 #读取指定行：
 lines=[]
-f=open(mainApp_file,'r', encoding="utf-8-sig")  #your path!
+f=open(txt_file,'r', encoding="utf-8-sig")  #your path!
 for line in f:
     lines.append(line)
 f.close()
 data = lines[line_num]
 result=[]
-result = data.split("\"" , 2)
+result = data.split("\"" , 4)
+if result:
+	print("-Env-realm success")
+	realm = result[3]
+else:
+	print("-Env-realm is null")
+	realm = ""
 print(result)
-if(result):
-	lines[line_num] = lines[line_num].replace(result[1],hostName)
-	print(lines[line_num])
-s=''.join(lines)
-f=open(mainApp_file,'w+', encoding='utf-8') #重新写入文件
-f.write(s)
+print("-Env-" + realm)
+
+#读取appclint preview
+appclint = ""
+appclintSecret = ""
+preview = ""
+previewSecret = ""
+numLine = []
+with open(txt_file, "r", encoding="utf-8-sig") as f1:
+    fcontent = f1.readlines()
+    for line_num, line_content in enumerate(fcontent):
+        sub_str_index = line_content.find("resource")
+        if sub_str_index != -1:
+            print("---在第{}行{}列".format(line_num, sub_str_index))
+            numLine.append(line_num)
+            #break
+#读取指定行：
+lines=[]
+f=open(txt_file,'r', encoding="utf-8-sig")  #your path!
+for line in f:
+    lines.append(line)
 f.close()
-#配置环境结束
+if(len(numLine) > 0) :
+    data = lines[numLine[0]]
+    s = data[data.index(":"):]
+    result=[]
+    result = s.split("\"" , 2)
+    data1 = lines[numLine[0] + 2]
+    s1 = data1[data1.index(":"):]
+    result1=[]
+    result1 = s1.split("\"" , 2)
+if result:
+	print("-Env-appclint success")
+	appclint = result[1]
+	appclintSecret = result1[1]
+else:
+	print("-Env-appclint is null")
+	appclint = ""
+	appclintSecret = ""
+if(len(numLine) > 1) :
+    data = lines[numLine[1]]
+    s = data[data.index(":"):]
+    result=[]
+    result = s.split("\"" , 2)
+    data1 = lines[numLine[1] + 2]
+    s1 = data1[data1.index(":"):]
+    result1=[]
+    result1 = s1.split("\"" , 2)
+if result:
+	print("-Env-preview success")
+	preview = result[1]
+	previewSecret = result1[1]
+else:
+	print("-Env-preview is null")
+	preview = ""
+	previewSecret = ""
+print(result)
+print("-Env-" + appclint + appclintSecret + preview + previewSecret)
+
+modifyValue(mainApp_file, "String privateServerHost", hostName)
+modifyValue(mainApp_file, "String privateServerPort", portName)
+modifyValue(mainApp_file, "String privateAuthRealm", realm)
+modifyValue(mainApp_file, "ExtendConstants.PRIVATE_CLIENT_ID_ADDR", appclint)
+modifyValue(mainApp_file, "ExtendConstants.PRIVATE_SECRET_ADDR", appclintSecret)
+modifyValue(mainApp_file, "ExtendConstants.PREVIEW_CLIENT_ID_ADDR", preview)
+modifyValue(mainApp_file, "ExtendConstants.PREVIEW_SECRET_ADDR", previewSecret)
+
 print("---set env end---")
