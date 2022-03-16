@@ -151,48 +151,25 @@ export default {
                 });
         },
         addEnvironment() {
-            // if (this.validateProject()) {
-            //     this.curId++;
-            //     setStorage("curId", this.curId);
-            //     let project = {
-            //         id: this.curId,
-            //         name: this.projectName,
-            //         ip: this.projectIp,
-            //         basePath: this.selectPath,
-            //         product: this.platformMap[this.radio1],
-            //         framework: this.platformMap[this.radio2],
-            //         _vue: this,
-            //         password: this.openPassword,
-            //     };
-            //     this.loadingFn("项目创建中请稍等...");
-            //     window.NativeBrige.creatProject(project)
-            //         .then((res) => {
-            //             delete project._vue;
-            //             this.projectList.push(project);
-            //             setStorage(`projectList-${this.value}`, JSON.stringify(this.projectList));
-            //             this.loading.close();
-            //             console.log("pluginMgr.vue - addProject - res", res);
-            //             this.tostMsg({
-            //                 message: "创建成功",
-            //             });
-            //             this.dialogVisible = false;
-            //         })
-            //         .catch((err) => {
-            //             if (err.type == "password") {
-            //                 this.getPassword();
-            //                 return;
-            //             }
-            //             console.log("pluginMgr.vue - addProject - err", err);
-            //             this.loading.close();
-            //             this.tostMsg({
-            //                 message: `创建失败：${err.msg}`,
-            //                 type: "error",
-            //                 duration: "10000",
-            //             });
-            //             this.dialogVisible = false;
-            //         });
-            // }
-            this.dialogVisible = false;
+            this.loadingFn("环境新增中请稍等...");
+                window.NativeBrige.addEnv(this.selectPath, this.projectPath, this.environmentName)
+                    .then((res) => {
+                        console.log("addEnvironment - res", res);
+                        this.loading.close();
+                        this.tostMsg({
+                            message: "新增完成",
+                        });
+                        this.dialogVisible = false;
+                    })
+                    .catch((err) => {
+                        this.loading.close();
+                        this.tostMsg({
+                            message: `新增失败：${err.msg}`,
+                            type: "error",
+                            duration: "10000",
+                        });
+                        this.dialogVisible = false;
+                    });
         },
         modifyEnvironment() {
             this.loadingFn("环境配置中请稍等...");
