@@ -253,7 +253,7 @@ let apptray = {
             },
         ]);
         tray.setContextMenu(menu);
-        tray.setToolTip("兆日前端挡板");
+        tray.setToolTip("兆日环境配置");
         // 托盘点击事件
         tray.on("click", () => {
             if (mainWinow.isMinimized()) mainWinow.restore();
