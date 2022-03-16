@@ -43,4 +43,4 @@ for value in array do
     end
  end
 
-puts string = tempArr.join("-Env-")
+puts string = array.join("-Env-")
