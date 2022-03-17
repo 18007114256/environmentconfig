@@ -1,6 +1,9 @@
 #!/usr/bin/ruby -w
 # -*- coding: UTF-8 -*-
 require File.expand_path('../filecontrol',__FILE__)
+require File.expand_path('../tchat_add_fb',__FILE__)
+require File.expand_path('../replacefile',__FILE__)
+require 'xcodeproj'
 
 envSrc = ARGV[0].dup          #环境配置文件地址
 src = ARGV[1].dup             #工程地址
@@ -240,4 +243,8 @@ begin
 end while i + $start < j
 
 puts "modify success!"
+
+addFileToProject = ReplaceFile.new
+addFileToProject.addFileToProject(envSrc,src)
+
 
