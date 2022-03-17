@@ -14,7 +14,7 @@
         </div>
 
         <el-dialog class="pluginMgrDialog" title="新建环境" :visible.sync="dialogVisible">
-            <el-input v-model="environmentName" placeholder="请输入环境名称" type="text"></el-input>
+            <el-input v-model="environmentName" placeholder="请输入环境名称" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -151,6 +151,37 @@ export default {
                 });
         },
         addEnvironment() {
+            if(this.environmentName.trim().length < 1) {
+                this.tostMsg({
+                            message: "请输入环境名",
+                            type: "error",
+                            duration: "3000",
+                        });
+                return;
+            }
+            if(this.selectPath.trim().length < 1) {
+                this.tostMsg({
+                            message: "请选择环境",
+                            type: "error",
+                            duration: "3000",
+                        });
+                return;
+            }
+            var canAdd = true;
+            this.environmentList.forEach(element => {
+                if (element == this.environmentName) {
+                    canAdd = false;
+                    this.tostMsg({
+                            message: "无法创建同名环境",
+                            type: "error",
+                            duration: "3000",
+                        });
+                    return;
+                }
+            });
+            if(!canAdd) {
+                return;
+            }
             this.loadingFn("环境新增中请稍等...");
                 window.NativeBrige.addEnv(this.selectPath, this.projectPath, this.environmentName)
                     .then((res) => {
@@ -160,6 +191,10 @@ export default {
                             message: "新增完成",
                         });
                         this.dialogVisible = false;
+                                //获取项目初始环境列表
+                        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                            this.environmentList = res.split("-Env-");
+                        });
                     })
                     .catch((err) => {
                         this.loading.close();
@@ -172,6 +207,14 @@ export default {
                     });
         },
         modifyEnvironment() {
+            if(this.selectPath1.trim().length < 1) {
+                this.tostMsg({
+                            message: "请选择环境",
+                            type: "error",
+                            duration: "3000",
+                        });
+                return;
+            }
             this.loadingFn("环境配置中请稍等...");
                 window.NativeBrige.modifyEnv(this.selectPath1, this.projectPath, this.environmentName1)
                     .then((res) => {

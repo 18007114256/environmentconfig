@@ -536,7 +536,7 @@ class AndroidBrigeImpl {
                     //     console.log("成功", data);
                     // }
                     if (data.indexOf("-Env-") != -1) {
-                        res(data);
+                        res(data.trim());
                         console.log("成功", data);
                     }
                 },
