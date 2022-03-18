@@ -1,0 +1,35 @@
+- (void)setServerConfigEqual_{
+    /*************************************服务器参数配置*************************************/
+    [self setNetworkConfig:@"2108933" forKey:AppTid];
+    [self setNetworkConfig:@"443" forKey:MstpPort];//mstp服务器端口
+    [self setNetworkConfig:@[@"cloudtest.sinosun.com"] forKey:MstpHost];//mstp服务器Host地址
+    [self setNetworkConfig:@"443" forKey:PrivateServerPort];//http服务器端口
+    [self setNetworkConfig:@"acepb2uat.sinosun.com" forKey:PrivateServerHost];//http服务器主机名
+    [self setNetworkConfig:@[@[@"acepb2uat.sinosun.com"]] forKey:kEnvConfig_NetWorkConfig_EnvHTTPHostBackup];//业务服务器（TS）Host备份地址
+    
+    [self setNetworkConfig:@"https://bplus-uat.sinosun.com" forKey:MallServerAddr];//商城Host地址
+    [self setNetworkConfig:@"https://bplus-uat.sinosun.com" forKey:TravelServerAddr];//商旅Host地址
+    [self setNetworkConfig:@"https://bplus-uat.sinosun.com" forKey:NetMeetingServerAddr];//JTS会议Host地址
+    
+    [self setNetworkConfig:@"" forKey:OfflineHost];//mpaas离线包Host地址
+    
+    [self setNetworkConfig:@"pb2uat" forKey:kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix];//http请求的网关地址，比如ssp-http，连接在http端口后面
+    [self setNetworkConfig:@"g+xj9zXHVewsNUXlPz9Lo1ah3+GnBT8legKAImQRK6ycvKauosjWD7l5AD4O8Dxjxrn26hwKBKmj2ia+c3hjDA==" forKey:kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey];//软证书验签公钥
+
+    // keyCloak认证相关
+    [self setNetworkConfig:@"https://acepb2uat.sinosun.com/pb2uat/auth/realms/acePB2_uat/protocol/openid-connect/auth" forKey:PrivateAuthAddr];   //idToken认证相关的Authorization地址
+    [self setNetworkConfig:@"https://acepb2uat.sinosun.com/pb2uat/auth/realms/acePB2_uat/protocol/openid-connect/token" forKey:PrivateTokenAddr];   //idToken认证相关的Token地址
+    [self setNetworkConfig:@"appClient" forKey:PrivateClientIdAddr];    //idToken认证相关的clientId
+    [self setNetworkConfig:@"89bmPE3liGnjv83bd8l6Ak0Ic8R2oN" forKey:PrivateSecretAddr];    //idToken认证相关的clientSecret
+    
+    /*************************************加解密参数配置*************************************/
+    [self setNetworkConfig:@"biz_ace-uat-param.se" forKey:MstpSecretFile];   //mstp se文件名
+    [self setNetworkConfig:@"biz_ace@mstp.sinosun.com" forKey:kEncConfig_NetWorkConfig_EnvMSTPPublicKey];  //mstp 加密公钥串
+    [self setNetworkConfig:@"biz_ace-uat-param.se" forKey:HttpSecretFile];   //http se文件名
+    [self setNetworkConfig:@"sinobankbiz@ts.sinosun.com" forKey:kEncConfig_NetWorkConfig_EnvHTTPPublicKey];  //http加密公钥串
+    [self setNetworkConfig:@"ea1a8c40a3ea44e9b6e4b8a642637408" forKey:JwePublicBslKid];   // 公有云 jwe 加密公钥ID
+    [self setNetworkConfig:@"23C0F8DCD02606990A6B5C6F363D0B19870C2197B3885026DA704D5E60C60F5799C077E5A9EBAE30822B4E458FB28A0BDE539EA49ABE44963D9C12AF8B6B8DB0" forKey:JwePublicBslKey];  // 公有云 jwe 加密公钥串
+    [self setNetworkConfig:@"ded1110d9e6e421bb4edca9cc6983c4b" forKey:JwePrivateBslKid];   // 私有云 jwe 加密公钥ID
+    [self setNetworkConfig:@"83EC63F735C755EC2C3545E53F3F4BA356A1DFE1A7053F257A02802264112BAC9CBCA6AEA2C8D60FB979003E0EF03C63C6B9F6EA1C0A04A9A3DA26BE7378630C" forKey:JwePrivateBslKey];  // 私有云 jwe 加密公钥串
+}
+
