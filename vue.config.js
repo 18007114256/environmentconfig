@@ -9,19 +9,19 @@ function getProductName(){
     let name = ''
     switch(process.env.CURRENT_PRO){
         case 'pluginScpmock':
-            name = 'SCP_MOCK_数据管理端';
+            name = '环境配置';
             break
         case 'pluginH5':
-            name = "SCP_MOCK_客户端";
+            name = "环境配置_客户端";
             break
         case 'pluginIos':
-            name = "SCP_MOCK_客户端插件_Ios";
+            name = "环境配置_客户端插件_Ios";
             break
         case 'pluginAndroid':
-            name = "SCP_MOCK_客户端插件_Android";
+            name = "环境配置_客户端插件_Android";
             break
         default :
-            name = "SCP_MOCK_客户端";
+            name = "环境配置_客户端";
     }
     return name;
 }
