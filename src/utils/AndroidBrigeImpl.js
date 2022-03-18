@@ -252,6 +252,74 @@ class AndroidBrigeImpl {
             );
         });
     }
+    modifyName(projectPath, envName) {
+        console.log("Android - modifyName - ", projectPath + envName);
+        let cmdPath = _this.getScriptPath();
+        return new Promise((res) => {
+            _this.runExec(
+                `modifyName.bat ${projectPath} ${envName}`,
+                // cmdStr,
+                cmdPath + "\\Mockscript",
+                (data) => {
+                    console.log("data-modifyName", data);
+                    if (data.indexOf("modifyName end") != -1) {
+                        let obj = {
+                            type: true,
+                            code: 200,
+                        };
+                        res(obj);
+                        console.log("成功", data);
+                    }
+                },
+                (data) => {
+                    console.log("data-stderr", data);
+                    if (data.indexOf("ele_fail") != -1) {
+                        let obj = {
+                            type: false,
+                            code: 400,
+                            msg: "修改失败",
+                        };
+                        _rej(obj);
+                        console.log("失败", data);
+                    }
+                },
+            );
+        });
+    }
+    deleteEnv(projectPath, envName) {
+        console.log("Android - deleteEnv - ", projectPath + envName);
+        let cmdPath = _this.getScriptPath();
+        return new Promise((res) => {
+            _this.runExec(
+                `deleteEnv.bat ${projectPath} ${envName}`,
+                // cmdStr,
+                cmdPath + "\\Mockscript",
+                (data) => {
+                    console.log("data-deleteEnv", data);
+                    if (data.indexOf("deleteEnv end") != -1) {
+                        let obj = {
+                            type: true,
+                            code: 200,
+                        };
+                        res(obj);
+                        console.log("成功", data);
+                    }
+                },
+                (data) => {
+                    console.log("data-stderr", data);
+                    if (data.indexOf("ele_fail") != -1) {
+                        let obj = {
+                            type: false,
+                            code: 400,
+                            msg: "删除失败",
+                        };
+                        _rej(obj);
+                        console.log("失败", data);
+                    }
+                },
+            );
+        });
+    }
     closeFn(time, msg) {
         let t = time;
         _vue.loading && _vue.loading.close();

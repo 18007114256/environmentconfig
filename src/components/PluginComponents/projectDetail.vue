@@ -5,7 +5,7 @@
             <div v-if="!environmentList.length"><el-empty description="暂无环境"></el-empty></div>
             <div class="listItem" v-for="(item, index) in environmentList" :key="index">
                 <div class="itemName" @click="envClick(item)">{{ item }}</div>
-                <!-- <i class="el-icon-close" @click="preDelete(item.id)"></i> -->
+                <i class="el-icon-close" @click="preDelete(item)"></i>
             </div>
         </div>
         <div class="bottomBox">
@@ -35,7 +35,7 @@
         </el-dialog>
 
         <el-dialog class="pluginMgrDialog" title="配置环境" :visible.sync="dialogVisible1">
-            <el-input v-model="environmentName1" :disabled="true" type="text"></el-input>
+            <el-input v-model="environmentName1" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -76,6 +76,7 @@ export default {
             environmentName1: "",
             selectPath: "",
             selectPath1: "",
+            baseName:"",
             mockFlag: true,
             dialogVisible: false,
             dialogVisible1: false,
@@ -115,6 +116,7 @@ export default {
     },
     methods: {
         envClick(data) {
+            this.baseName = JSON.stringify(data);
             this.environmentName1 = data;
             this.dialogVisible1 = true;
         },
@@ -149,6 +151,35 @@ export default {
                 .catch((req) => {
                     console.log(req);
                 });
+        },
+        preDelete(name) {
+            this.loadingFn("环境删除中请稍等...");
+                window.NativeBrige.deleteEnv(this.projectPath, name)
+                    .then((res) => {
+                        console.log("deleteEnv - res", res);
+                        this.loading.close();
+                        this.tostMsg({
+                            message: "删除完成",
+                        });
+                        this.dialogVisible = false;
+                                //获取项目初始环境列表
+                        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                            this.environmentList = res.split("-Env-");
+                        });
+                    })
+                    .catch((err) => {
+                        this.loading.close();
+                        this.tostMsg({
+                            message: `删除失败：${err.msg}`,
+                            type: "error",
+                            duration: "10000",
+                        });
+                        this.dialogVisible = false;
+                    });
+            // var index = this.environmentList.indexOf(name); 
+            // if (index > -1) { 
+            // this.environmentList.splice(index, 1);
+            // }
         },
         addEnvironment() {
             if(this.environmentName.trim().length < 1) {
@@ -207,12 +238,46 @@ export default {
                     });
         },
         modifyEnvironment() {
-            if(this.selectPath1.trim().length < 1) {
+            if(this.environmentName1.trim().length < 1) {
                 this.tostMsg({
+                            message: "请输入环境名",
+                            type: "error",
+                            duration: "3000",
+                        });
+                return;
+            }
+            if(this.selectPath1.trim().length < 1) {
+                if(JSON.parse(this.baseName) == this.environmentName1) {
+                    this.tostMsg({
                             message: "请选择环境",
                             type: "error",
                             duration: "3000",
                         });
+                    return;
+                }
+                 this.loadingFn("修改名称中请稍等...");
+                window.NativeBrige.modifyName(this.projectPath, this.environmentName1)
+                    .then((res) => {
+                        console.log("modifyName - res", res);
+                        this.loading.close();
+                        this.tostMsg({
+                            message: "修改完成",
+                        });
+                        this.dialogVisible1 = false;
+                                //获取项目初始环境列表
+                        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                            this.environmentList = res.split("-Env-");
+                        });
+                    })
+                    .catch((err) => {
+                        this.loading.close();
+                        this.tostMsg({
+                            message: `修改失败：${err.msg}`,
+                            type: "error",
+                            duration: "10000",
+                        });
+                        this.dialogVisible1 = false;
+                    });
                 return;
             }
             this.loadingFn("环境配置中请稍等...");

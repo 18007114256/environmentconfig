@@ -77,8 +77,34 @@ class NativeBrige {
                         rej(err);
                     });
 
-        });
-}
+        }); 
+    }
+    modifyName(projectPath, envName) {
+        return new Promise((res, rej) => {
+                this.nativeBrigeImpl
+                    .addEnv(projectPath, envName)
+                    .then((data) => {
+                        res(data);
+                    })
+                    .catch((err) => {
+                        rej(err);
+                    });
+
+        }); 
+    }
+    deleteEnv(projectPath, envName) {
+        return new Promise((res, rej) => {
+                this.nativeBrigeImpl
+                    .addEnv(projectPath, envName)
+                    .then((data) => {
+                        res(data);
+                    })
+                    .catch((err) => {
+                        rej(err);
+                    });
+
+        }); 
+    }
     getProject(id) {
         return this.nativeBrigeImpl.getProject(id);
     }
