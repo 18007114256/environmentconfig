@@ -5,6 +5,7 @@
             <div v-if="!environmentList.length"><el-empty description="暂无环境"></el-empty></div>
             <div class="listItem" v-for="(item, index) in environmentList" :key="index">
                 <div class="itemName" @click="envClick(item)">{{ item }}</div>
+                <el-button class="button-modify" @click="modifyName(item)">修改名称</el-button>
                 <i class="el-icon-close" @click="preDelete(item)"></i>
             </div>
         </div>
@@ -35,7 +36,7 @@
         </el-dialog>
 
         <el-dialog class="pluginMgrDialog" title="配置环境" :visible.sync="dialogVisible1">
-            <el-input v-model="environmentName1" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
+            <el-input v-model="environmentName1" type="text" :disabled = true></el-input>
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -52,6 +53,17 @@
                     >关 闭</el-button
                 >
                 <el-button class="btn" type="primary" @click="modifyEnvironment">配 置</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog class="pluginMgrDialog" title="修改名称" :visible.sync="dialogVisible2">
+            <el-input v-model="environmentName2" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
+        
+            <span slot="footer" class="dialog-footer">
+                <el-button class="btn" type="danger" @click="dialogVisible2 = false"
+                    >关 闭</el-button
+                >
+                <el-button class="btn" type="primary" @click="modifyEnvName">修 改</el-button>
             </span>
         </el-dialog>
     </div>
@@ -74,12 +86,14 @@ export default {
             environmentList: [],
             environmentName: "",
             environmentName1: "",
+            environmentName2: "",
             selectPath: "",
             selectPath1: "",
             baseName:"",
             mockFlag: true,
             dialogVisible: false,
             dialogVisible1: false,
+            dialogVisible2: false,
             selectFlag: false,
             projectName: "",
             projectIp: "",
@@ -238,48 +252,14 @@ export default {
                     });
         },
         modifyEnvironment() {
-            if(this.environmentName1.trim().length < 1) {
-                this.tostMsg({
-                            message: "请输入环境名",
-                            type: "error",
-                            duration: "3000",
-                        });
-                return;
-            }
             if(this.selectPath1.trim().length < 1) {
-                if(JSON.parse(this.baseName) == this.environmentName1) {
-                    this.tostMsg({
-                            message: "请选择环境",
-                            type: "error",
-                            duration: "3000",
-                        });
-                    return;
-                }
-                 this.loadingFn("修改名称中请稍等...");
-                window.NativeBrige.modifyName(this.projectPath, this.environmentName1)
-                    .then((res) => {
-                        console.log("modifyName - res", res);
-                        this.loading.close();
-                        this.tostMsg({
-                            message: "修改完成",
-                        });
-                        this.dialogVisible1 = false;
-                                //获取项目初始环境列表
-                        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
-                            this.environmentList = res.split("-Env-");
-                        });
-                    })
-                    .catch((err) => {
-                        this.loading.close();
-                        this.tostMsg({
-                            message: `修改失败：${err.msg}`,
-                            type: "error",
-                            duration: "10000",
-                        });
-                        this.dialogVisible1 = false;
+                this.tostMsg({
+                        message: "请选择环境",
+                        type: "error",
+                        duration: "3000",
                     });
                 return;
-            }
+            }        
             this.loadingFn("环境配置中请稍等...");
                 window.NativeBrige.modifyEnv(this.selectPath1, this.projectPath, this.environmentName1)
                     .then((res) => {
@@ -299,6 +279,41 @@ export default {
                         });
                         this.dialogVisible1 = false;
                     });
+        },
+        modifyName(name) {
+            this.baseName = JSON.stringify(name);
+            this.environmentName2 = name;
+            this.dialogVisible2 = true;
+        },
+        modifyEnvName() {
+                if(JSON.parse(this.baseName) == this.environmentName2) {
+                    this.dialogVisible2 = false;
+                    return;
+                }
+                this.loadingFn("修改名称中请稍等...");
+                window.NativeBrige.modifyName(this.projectPath, this.environmentName2)
+                    .then((res) => {
+                        console.log("modifyName - res", res);
+                        this.loading.close();
+                        this.tostMsg({
+                            message: "修改完成",
+                        });
+                        this.dialogVisible2 = false;
+                                //获取项目初始环境列表
+                        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                            this.environmentList = res.split("-Env-");
+                        });
+                    })
+                    .catch((err) => {
+                        this.loading.close();
+                        this.tostMsg({
+                            message: `修改失败：${err.msg}`,
+                            type: "error",
+                            duration: "10000",
+                        });
+                        this.dialogVisible2 = false;
+                    });
+                return;
         },
 
         importData(type) {
@@ -568,6 +583,9 @@ export default {
             }
             i {
                 cursor: pointer;
+            }
+            .button-modify {
+              margin-right: 20px;  
             }
         }
     }
