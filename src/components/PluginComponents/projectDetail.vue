@@ -66,6 +66,18 @@
                 <el-button class="btn" type="primary" @click="modifyEnvName">修 改</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog class="pluginMgrDialog" title="删除环境" :visible.sync="dialogVisible3">
+            
+            <span>是否确认删除该环境</span>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button class="btn" type="danger" @click="dialogVisible3 = false"
+                    >取 消</el-button
+                >
+                <el-button class="btn" type="primary" @click="deleteEnv">确 认</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -94,6 +106,7 @@ export default {
             dialogVisible: false,
             dialogVisible1: false,
             dialogVisible2: false,
+            dialogVisible3: false,
             selectFlag: false,
             projectName: "",
             projectIp: "",
@@ -167,15 +180,19 @@ export default {
                 });
         },
         preDelete(name) {
+            this.deleteName = name;
+            this.dialogVisible3 = true;
+        },
+        deleteEnv() {
             this.loadingFn("环境删除中请稍等...");
-                window.NativeBrige.deleteEnv(this.projectPath, name)
+                window.NativeBrige.deleteEnv(this.projectPath, this.deleteName)
                     .then((res) => {
                         console.log("deleteEnv - res", res);
                         this.loading.close();
                         this.tostMsg({
                             message: "删除完成",
                         });
-                        this.dialogVisible = false;
+                        this.dialogVisible3 = false;
                                 //获取项目初始环境列表
                         window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
                             this.environmentList = res.split("-Env-");
@@ -188,7 +205,7 @@ export default {
                             type: "error",
                             duration: "10000",
                         });
-                        this.dialogVisible = false;
+                        this.dialogVisible3 = false;
                     });
             // var index = this.environmentList.indexOf(name); 
             // if (index > -1) { 
