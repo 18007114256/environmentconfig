@@ -15,7 +15,7 @@
         </div>
 
         <el-dialog class="pluginMgrDialog" title="新建环境" :visible.sync="dialogVisible">
-            <el-input v-model="environmentName" placeholder="请输入环境名称" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
+            <el-input v-model="environmentName" placeholder="请输入环境名称" type="text" onKeyUp="if(navigator.userAgent.indexOf('Mac OS X')<0) {value=value.replace(/[^\w\.\/]/ig,'')}"></el-input>
             <div class="selectProject">
                 <el-input
                     class="selectPath"
@@ -57,7 +57,7 @@
         </el-dialog>
 
         <el-dialog class="pluginMgrDialog" title="修改名称" :visible.sync="dialogVisible2">
-            <el-input v-model="environmentName2" type="text" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
+            <el-input v-model="environmentName2" type="text" onKeyUp="if(navigator.userAgent.indexOf('Mac OS X')<0) {value=value.replace(/[^\w\.\/]/ig,'')}"></el-input>
         
             <span slot="footer" class="dialog-footer">
                 <el-button class="btn" type="danger" @click="dialogVisible2 = false"
@@ -69,7 +69,7 @@
     </div>
 </template>
 <script>
-import { setStorage } from "../../utils/commonUtils.js";
+import { getStorage, setStorage } from "../../utils/commonUtils.js";
 import { getConfig } from "../../utils/editConfig.js";
 import { mapState } from "vuex";
 import XLSX from "xlsx";
@@ -108,6 +108,7 @@ export default {
             loading: null,
             dataChange: false,
             project: {},
+            envDict: {},
         };
     },
     created() {
@@ -121,9 +122,31 @@ export default {
         this.projectInfoMap = window.NativeBrige.getProjectInfo();
         this.interfaceList = this.projectInfoMap.interfaceList[this.currentId] || [];
         //获取项目初始环境列表
-        window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
-            this.environmentList = res.split("-Env-");
-        });
+        if(navigator.userAgent.indexOf("Mac OS X")>0) {
+            window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                var envArr = res.split("-Env-");
+                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                {};
+                if (Object.keys(tempDict).length != 0) {
+                    for (const key in tempDict) {
+                        this.environmentList.push(key);
+                    }
+                }else {
+                    for (let index = 0; index < envArr.length; index++) {
+                        const element = envArr[index];
+                        const key =  "环境" + element;
+                        this.envDict[key] = element;
+                        this.environmentList.push(key);
+                    }
+                    setStorage(`envInfo-${this.currentId}`,JSON.stringify(this.envDict));
+                }
+            });
+        }else{
+            window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
+                this.environmentList = res.split("-Env-");
+            });
+        }
     },
     beforeMount() {
         this.initData();
@@ -228,6 +251,10 @@ export default {
                 return;
             }
             this.loadingFn("环境新增中请稍等...");
+            var tempStr = this.environmentName;
+            if(navigator.userAgent.indexOf("Mac OS X")>0) {
+                this.environmentName = this.environmentList.length + '';
+            }
                 window.NativeBrige.addEnv(this.selectPath, this.projectPath, this.environmentName)
                     .then((res) => {
                         console.log("addEnvironment - res", res);
@@ -238,7 +265,18 @@ export default {
                         this.dialogVisible = false;
                                 //获取项目初始环境列表
                         window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
-                            this.environmentList = res.split("-Env-");
+                            if(navigator.userAgent.indexOf("Mac OS X")>0) {
+                                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                                {};
+                                if (Object.keys(tempDict).length != 0) {
+                                    tempDict[tempStr] = this.environmentList.length + '';
+                                    setStorage(`envInfo-${this.currentId}`,JSON.stringify(tempDict));
+                                    this.environmentList.push(tempStr);
+                                } 
+                            }else{
+                                this.environmentList = res.split("-Env-");
+                            }
                         });
                     })
                     .catch((err) => {
@@ -261,6 +299,14 @@ export default {
                 return;
             }        
             this.loadingFn("环境配置中请稍等...");
+            if(navigator.userAgent.indexOf("Mac OS X")>0) {
+                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                {};
+                if (Object.keys(tempDict).length != 0) {
+                    this.environmentName1 = tempDict[this.environmentName1];
+                } 
+            }
                 window.NativeBrige.modifyEnv(this.selectPath1, this.projectPath, this.environmentName1)
                     .then((res) => {
                         console.log("modifyEnvironment - res", res);
@@ -286,7 +332,35 @@ export default {
             this.dialogVisible2 = true;
         },
         modifyEnvName() {
+            if(navigator.userAgent.indexOf("Mac OS X")>0) {
                 if(this.baseName == this.environmentName2) {
+                    this.dialogVisible2 = false;
+                    return;
+                }
+                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                {};
+                if (Object.keys(tempDict).length != 0) {
+                    var new_key = this.environmentName2;
+                    var old_key = this.baseName;
+                    Object.keys(tempDict).forEach(key => {
+                        if (key === old_key) {
+                            tempDict[new_key] = tempDict[key];
+                            delete tempDict[key];
+                        } else {
+                            tempDict[`_${key}`] = tempDict[key];
+                            delete tempDict[key];
+                    
+                            tempDict[`${key}`] = tempDict[`_${key}`];
+                            delete tempDict[`_${key}`];
+                        }
+                    });
+                    setStorage(`envInfo-${this.currentId}`,JSON.stringify(tempDict));
+                    this.environmentList.splice(this.environmentList.indexOf(this.baseName),1,this.environmentName2);
+                }
+                this.dialogVisible2 = false;
+            }else {
+                 if(this.baseName == this.environmentName2) {
                     this.dialogVisible2 = false;
                     return;
                 }
@@ -313,7 +387,8 @@ export default {
                         });
                         this.dialogVisible2 = false;
                     });
-                return;
+                    return;
+            }
         },
 
         importData(type) {
