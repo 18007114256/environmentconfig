@@ -252,12 +252,12 @@ class AndroidBrigeImpl {
             );
         });
     }
-    modifyName(projectPath, envName) {
-        console.log("Android - modifyName - ", projectPath + envName);
+    modifyName(projectPath, envName, baseName) {
+        console.log("Android - modifyName - ", projectPath + envName + baseName);
         let cmdPath = _this.getScriptPath();
         return new Promise((res) => {
             _this.runExec(
-                `modifyName.bat ${projectPath} ${envName}`,
+                `modifyName.bat ${projectPath} ${envName} ${baseName}`,
                 // cmdStr,
                 cmdPath + "\\Mockscript",
                 (data) => {

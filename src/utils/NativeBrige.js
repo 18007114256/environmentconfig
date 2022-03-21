@@ -79,10 +79,10 @@ class NativeBrige {
 
         }); 
     }
-    modifyName(projectPath, envName) {
+    modifyName(projectPath, envName, baseName) {
         return new Promise((res, rej) => {
                 this.nativeBrigeImpl
-                    .addEnv(projectPath, envName)
+                    .modifyName(projectPath, envName, baseName)
                     .then((data) => {
                         res(data);
                     })

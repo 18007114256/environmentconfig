@@ -281,17 +281,17 @@ export default {
                     });
         },
         modifyName(name) {
-            this.baseName = JSON.stringify(name);
+            this.baseName = name;
             this.environmentName2 = name;
             this.dialogVisible2 = true;
         },
         modifyEnvName() {
-                if(JSON.parse(this.baseName) == this.environmentName2) {
+                if(this.baseName == this.environmentName2) {
                     this.dialogVisible2 = false;
                     return;
                 }
                 this.loadingFn("修改名称中请稍等...");
-                window.NativeBrige.modifyName(this.projectPath, this.environmentName2)
+                window.NativeBrige.modifyName(this.projectPath, this.environmentName2, this.baseName)
                     .then((res) => {
                         console.log("modifyName - res", res);
                         this.loading.close();
