@@ -95,7 +95,7 @@ class NativeBrige {
     deleteEnv(projectPath, envName) {
         return new Promise((res, rej) => {
                 this.nativeBrigeImpl
-                    .addEnv(projectPath, envName)
+                    .deleteEnv(projectPath, envName)
                     .then((data) => {
                         res(data);
                     })

@@ -124,13 +124,13 @@ if(len(buildList) > 1) :
     data = "apply from: 'buildConfig/" + sys.argv[3] + ".gradle'\n"
     lines.insert(5, data)           #插入并回车
     # 写入新环境编译配置
-    lines.insert(len(lines) +2 ,"def  load"+ sys.argv[3] + "CompileSetting(){\n")                #插入并回车
-    lines.insert(len(lines) +2 ,"   loadGeneralCompileSetting()\n")               #插入并回车
-    lines.insert(len(lines) +2 ,"   project.ext.set(\""+ sys.argv[3] + "_ThirdSDKLib\", rootProject.ext."+ sys.argv[3] + "_ThirdSDKLib)\n")           #插入并回车
-    lines.insert(len(lines) +2 ,"   project.ext.set(\""+ sys.argv[3] + "_JarLib\", rootProject.ext."+ sys.argv[3] + "_JarLib)\n")           #插入并回车
-    lines.insert(len(lines) +2 ,"   project.ext.set(\""+ sys.argv[3] + "_CompileProject\", rootProject.ext."+ sys.argv[3] + "_CompileProject)\n")              #插入并回车
-    lines.insert(len(lines) +2 ,"   project.ext.set(\""+ sys.argv[3] + "_ThirdAarLib\", rootProject.ext."+ sys.argv[3] + "_ThirdAarLib)\n")           #插入并回车
-    lines.insert(len(lines) +2 ,"}\n")           #插入并回车
+    lines.insert(len(lines) +3 ,"def  load"+ sys.argv[3] + "CompileSetting(){\n")                #插入并回车
+    lines.insert(len(lines) +3 ,"   loadGeneralCompileSetting()\n")               #插入并回车
+    lines.insert(len(lines) +3 ,"   project.ext.set(\""+ sys.argv[3] + "_ThirdSDKLib\", rootProject.ext."+ sys.argv[3] + "_ThirdSDKLib)\n")           #插入并回车
+    lines.insert(len(lines) +3 ,"   project.ext.set(\""+ sys.argv[3] + "_JarLib\", rootProject.ext."+ sys.argv[3] + "_JarLib)\n")           #插入并回车
+    lines.insert(len(lines) +3 ,"   project.ext.set(\""+ sys.argv[3] + "_CompileProject\", rootProject.ext."+ sys.argv[3] + "_CompileProject)\n")              #插入并回车
+    lines.insert(len(lines) +3 ,"   project.ext.set(\""+ sys.argv[3] + "_ThirdAarLib\", rootProject.ext."+ sys.argv[3] + "_ThirdAarLib)\n")           #插入并回车
+    lines.insert(len(lines) +3 ,"}\n")           #插入并回车
 
     s=''.join(lines)
     f=open(buildList[0],'w+', encoding='utf-8') #重新写入文件
