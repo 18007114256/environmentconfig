@@ -238,10 +238,10 @@ begin
           newParameter = headStr + bsl_sm2_public_key + middleStr + "JwePrivateBslKey" + tailStr #私有云 jwe 加密公钥串
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     File.open(fullPath[0], 'w') { |f| f.write(lines.join) }
      $start +=1
 end while i + $start < j
 
+File.open(fullPath[0], 'w') { |f| f.write(lines.join) }
 puts "modify success!"
 
 addFileToProject = ReplaceFile.new

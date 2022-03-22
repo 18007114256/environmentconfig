@@ -124,9 +124,9 @@ end
 
 puts i,j
 
-lines.insert(i-2,"    else if (conType==" + envConfig + ") {\n")
-lines.insert(i-1,"        [self setServerConfigEqual_" + envConfig + "];\n")
-lines.insert(i,"    }\n")
+lines[i-3] = "    }else if (conType==" + envConfig + ") {" << $/
+lines.insert(i-2,"        [self setServerConfigEqual_" + envConfig + "];\n")
+lines.insert(i-1,"    }\n")
 File.open(fullPath[0], 'w') { |f| f.write(lines.join) }
 arr = IO.readlines(fullPath[0])
 lines = File.readlines(fullPath[0])

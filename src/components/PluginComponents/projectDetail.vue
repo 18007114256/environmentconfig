@@ -208,6 +208,15 @@ export default {
         },
         deleteEnv() {
             this.loadingFn("环境删除中请稍等...");
+            const tempStr = this.deleteName;
+            if(navigator.userAgent.indexOf("Mac OS X")>0) {
+                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                {};
+                if (Object.keys(tempDict).length != 0) {
+                    this.deleteName = tempDict[this.deleteName];
+                } 
+            }
                 window.NativeBrige.deleteEnv(this.projectPath, this.deleteName)
                     .then((res) => {
                         console.log("deleteEnv - res", res);
@@ -218,7 +227,21 @@ export default {
                         this.dialogVisible3 = false;
                                 //获取项目初始环境列表
                         window.NativeBrige.getEnvironmentList(this.projectPath).then(res=> {
-                            this.environmentList = res.split("-Env-");
+                            if(navigator.userAgent.indexOf("Mac OS X")>0) {
+                                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                                {};
+                                if (Object.keys(tempDict).length != 0) {
+                                    console.log(tempStr);
+                                    delete tempDict[tempStr]
+                                    console.log(tempDict);
+                                    setStorage(`envInfo-${this.currentId}`,JSON.stringify(tempDict));
+                                    const i = this.environmentList.indexOf(tempStr);
+                                    this.environmentList.splice(i,1);
+                                } 
+                            }else{
+                                this.environmentList = res.split("-Env-");
+                            }
                         });
                     })
                     .catch((err) => {
@@ -268,11 +291,22 @@ export default {
                 return;
             }
             this.loadingFn("环境新增中请稍等...");
-            var tempStr = this.environmentName;
+            const tempStr = this.environmentName;
+            var envConfig = this.environmentName;
             if(navigator.userAgent.indexOf("Mac OS X")>0) {
-                this.environmentName = this.environmentList.length + '';
+                var tempDict = (getStorage(`envInfo-${this.currentId}`) &&
+                    JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
+                {};
+                if (Object.keys(tempDict).length != 0) {
+                    const tempArr = []
+                    for (const key in tempDict) {
+                        tempArr.push(tempDict[key]);
+                    }
+                    envConfig = Math.max(...tempArr) + 1;
+                } 
+                
             }
-                window.NativeBrige.addEnv(this.selectPath, this.projectPath, this.environmentName)
+                window.NativeBrige.addEnv(this.selectPath, this.projectPath, envConfig)
                     .then((res) => {
                         console.log("addEnvironment - res", res);
                         this.loading.close();
@@ -287,7 +321,7 @@ export default {
                                     JSON.parse(getStorage(`envInfo-${this.currentId}`))) ||
                                 {};
                                 if (Object.keys(tempDict).length != 0) {
-                                    tempDict[tempStr] = this.environmentList.length + '';
+                                    tempDict[tempStr] = envConfig + '';
                                     setStorage(`envInfo-${this.currentId}`,JSON.stringify(tempDict));
                                     this.environmentList.push(tempStr);
                                 } 

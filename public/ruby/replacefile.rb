@@ -15,11 +15,14 @@ class ReplaceFile
         addFrameworkInstance = AddFramework.new
     
         repFiles.each do |fileItem|
-            puts fileItem
-    
             fileName = File::basename(fileItem)
+            if File::file?(destFilePath + '/' + fileName)
+                puts "文件已存在，停止拷贝和引用"
+                puts "success"
+                abort
+            end
             if fileName.include? ".se"
-                puts destFilePath
+                puts destFilePath,fileItem
                 filecontrol.file_copy(fileItem,destFilePath)
                 addFrameworkInstance.addGroupRef(projectFullPath,destFilePath + "/" + fileName,"","","<group>")
                 puts "success"
