@@ -25,7 +25,7 @@ j = 0     #定义一个数字作为要删除的行数的最终下标
 
 #遍历数组，根据传进来的需要删除的环境名获取需要删除的行数的初始和最终下标
 for value in arr do
-     if value.include? envMethod
+    if (value.include? envMethod) && !(value.index("/") == 0)
           i = arr.index(value)
      end
      if i != 0 && j == 0 && (value.include? "(void)setServerConfigEqual_") && !(value.include? envMethod)

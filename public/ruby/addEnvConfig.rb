@@ -142,104 +142,104 @@ tailStr = "];"
 k = 0
 tempArr = IO.readlines("./setServerConfig.txt")
 for value in tempArr do
-    if value =~/setServerConfigEqual_/
+    if value.include? "setServerConfigEqual_"
         newParameter = "- (void)setServerConfigEqual_" + envConfig + "{"
         value = newParameter << $/ #将新的参数替换到对应的行中
     end
-    if value =~/AppTid/
+    if value.include? "AppTid"
         newParameter = headStr + tidValue + middleStr + "AppTid" + tailStr #拼接新的参数
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   # if value =~/MstpPort/
+   # if value.include? "MstpPort"
    #      newParameter = headStr + mstpPortValue + middleStr + "MstpPort" + tailStr #mstp服务器端口
    #      value = newParameter << $/ #将新的参数替换到对应的行中
    # end
-   # if value =~/MstpHost/
+   # if value.include? "MstpHost"
    #      newParameter = headStr + mstpHostValue + middleStr + "MstpHost" + tailStr #mstp服务器Host地址
    #      value = newParameter << $/ #将新的参数替换到对应的行中
    # end
-   if value =~/PrivateServerPort/
+   if value.include? "PrivateServerPort"
         newParameter = headStr + serverPortValue + middleStr + "PrivateServerPort" + tailStr #http服务器端口
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/PrivateServerHost/
+   if value.include? "PrivateServerHost"
         newParameter = headStr + serverHostValue + middleStr + "PrivateServerHost" + tailStr #http服务器主机名
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/kEnvConfig_NetWorkConfig_EnvHTTPHostBackup/
+   if value.include? "kEnvConfig_NetWorkConfig_EnvHTTPHostBackup"
         newParameter = headStr + httpHostBackup + middleStr + "kEnvConfig_NetWorkConfig_EnvHTTPHostBackup" + tailStr #业务服务器（TS）Host备份地址
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/MallServerAddr/
+   if value .include? "MallServerAddr"
         newParameter = headStr + bplusServerAddr + middleStr + "MallServerAddr" + tailStr #商城Host地址
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/TravelServerAddr/
+   if value.include? "TravelServerAddr"
         newParameter = headStr + bplusServerAddr + middleStr + "TravelServerAddr" + tailStr #商旅Host地址
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/NetMeetingServerAddr/
+   if value.include? "NetMeetingServerAddr"
         newParameter = headStr + bplusServerAddr + middleStr + "NetMeetingServerAddr" + tailStr #JTS会议Host地址
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   # if value =~/OfflineHost/
+   # if value.include? "OfflineHost"
    #      newParameter = headStr + value + middleStr + "OfflineHost" + tailStr #mpaas离线包Host地址
    #      value = newParameter << $/ #将新的参数替换到对应的行中
    # end
-   # if value =~/kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix/
+   # if value.include? "kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix"
    #      newParameter = headStr + value + middleStr + "kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix" + tailStr #http请求的网关地址，比如ssp-http，连接在http端口后面
    #      value = newParameter << $/ #将新的参数替换到对应的行中
    # end
-   if value =~/kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey/
+   if value.include? "kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey"
         newParameter = headStr + sinots_publickeyfile + middleStr + "kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey" + tailStr #软证书验签公钥
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/PrivateAuthAddr/
+   if value.include? "PrivateAuthAddr"
         newParameter = headStr + privateAuthAddr + middleStr + "PrivateAuthAddr" + tailStr #idToken认证相关的Authorization地址
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/PrivateTokenAddr/
+   if value.include? "PrivateTokenAddr"
         newParameter = headStr + privateTokenAddr + middleStr + "PrivateTokenAddr" + tailStr #idToken认证相关的Token地址
         # lines[i + $start - 1] = "" << $/
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/PrivateClientIdAddr/
+   if value.include? "PrivateClientIdAddr"
         newParameter = headStr + privateClientIdAddr + middleStr + "PrivateClientIdAddr" + tailStr #idToken认证相关的clientId
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/PrivateSecretAddr/
+   if value.include? "PrivateSecretAddr"
         newParameter = headStr + privateSecretAddr + middleStr + "PrivateSecretAddr" + tailStr #idToken认证相关的clientSecret
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/MstpSecretFile/
+   if value.include? "MstpSecretFile"
         newParameter = headStr + secretFileValue + middleStr + "MstpSecretFile" + tailStr #mstp se文件名
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/kEncConfig_NetWorkConfig_EnvMSTPPublicKey/
+   if value .include? "kEncConfig_NetWorkConfig_EnvMSTPPublicKey"
         newParameter = headStr + mstpPublicKey + middleStr + "kEncConfig_NetWorkConfig_EnvMSTPPublicKey" + tailStr #mstp 加密公钥串
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/HttpSecretFile/
+   if value.include? "HttpSecretFile"
         newParameter = headStr + secretFileValue + middleStr + "HttpSecretFile" + tailStr #http se文件名
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/kEncConfig_NetWorkConfig_EnvHTTPPublicKey/
+   if value.include? "kEncConfig_NetWorkConfig_EnvHTTPPublicKey"
         newParameter = headStr + httpPublicKey + middleStr + "kEncConfig_NetWorkConfig_EnvHTTPPublicKey" + tailStr #http加密公钥串
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/JwePublicBslKid/
+   if value.include? "JwePublicBslKid"
         newParameter = headStr + bsl_sinosun_sm2_kid + middleStr + "JwePublicBslKid" + tailStr #公有云 jwe 加密公钥ID
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/JwePublicBslKey/
+   if value.include? "JwePublicBslKey"
         newParameter = headStr + bsl_sinosun_sm2_public_key + middleStr + "JwePublicBslKey" + tailStr #公有云 jwe 加密公钥串
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/JwePrivateBslKid/
+   if value.include? "JwePrivateBslKid"
         newParameter = headStr + bsl_sm2_kid + middleStr + "JwePrivateBslKid" + tailStr #私有云 jwe 加密公钥ID
         value = newParameter << $/ #将新的参数替换到对应的行中
    end
-   if value =~/JwePrivateBslKey/
+   if value.include? "JwePrivateBslKey"
         newParameter = headStr + bsl_sm2_public_key + middleStr + "JwePrivateBslKey" + tailStr #私有云 jwe 加密公钥串
         value = newParameter << $/ #将新的参数替换到对应的行中
    end

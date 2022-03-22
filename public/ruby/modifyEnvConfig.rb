@@ -120,7 +120,7 @@ j = 0     #定义一个数字作为要修改的行数的最终下标
 
 #遍历数组，根据传进来的需要修改的环境名获取需要修改的行数的初始和最终下标
 for value in arr do
-     if value.include? envMethod
+     if (value.include? envMethod) && !(value.index("/") == 0)
           i = arr.index(value)
      end
      if i != 0 && j == 0 && (value.include? "(void)setServerConfigEqual_") && !(value.include? envMethod)
@@ -141,100 +141,100 @@ tailStr = "];"
 
 #遍历需要修改的行数，并修改对应的参数
 begin
-     if arr[i + $start] =~/AppTid/
+     if arr[i + $start].include? "AppTid"
           newParameter = headStr + tidValue + middleStr + "AppTid" + tailStr #拼接新的参数
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     # if arr[i + $start] =~/MstpPort/
+     # if arr[i + $start].include? "MstpPort"
      #      newParameter = headStr + mstpPortValue + middleStr + "MstpPort" + tailStr #mstp服务器端口
      #      lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      # end
-     # if arr[i + $start] =~/MstpHost/
+     # if arr[i + $start].include? "MstpHost"
      #      newParameter = headStr + mstpHostValue + middleStr + "MstpHost" + tailStr #mstp服务器Host地址
      #      lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      # end
-     if arr[i + $start] =~/PrivateServerPort/
+     if arr[i + $start].include? "PrivateServerPort"
           newParameter = headStr + serverPortValue + middleStr + "PrivateServerPort" + tailStr #http服务器端口
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/PrivateServerHost/
+     if arr[i + $start].include? "PrivateServerHost"
           newParameter = headStr + serverHostValue + middleStr + "PrivateServerHost" + tailStr #http服务器主机名
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/kEnvConfig_NetWorkConfig_EnvHTTPHostBackup/
+     if arr[i + $start].include? "kEnvConfig_NetWorkConfig_EnvHTTPHostBackup"
           newParameter = headStr + httpHostBackup + middleStr + "kEnvConfig_NetWorkConfig_EnvHTTPHostBackup" + tailStr #业务服务器（TS）Host备份地址
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/MallServerAddr/
+     if arr[i + $start].include? "MallServerAddr"
           newParameter = headStr + bplusServerAddr + middleStr + "MallServerAddr" + tailStr #商城Host地址
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/TravelServerAddr/
+     if arr[i + $start].include? "TravelServerAddr"
           newParameter = headStr + bplusServerAddr + middleStr + "TravelServerAddr" + tailStr #商旅Host地址
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/NetMeetingServerAddr/
+     if arr[i + $start].include? "NetMeetingServerAddr"
           newParameter = headStr + bplusServerAddr + middleStr + "NetMeetingServerAddr" + tailStr #JTS会议Host地址
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     # if arr[i + $start] =~/OfflineHost/
+     # if arr[i + $start].include? "OfflineHost"
      #      newParameter = headStr + value + middleStr + "OfflineHost" + tailStr #mpaas离线包Host地址
      #      lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      # end
-     # if arr[i + $start] =~/kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix/
+     # if arr[i + $start].include? "kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix"
      #      newParameter = headStr + value + middleStr + "kEnvConfig_NetWorkConfig_EnvHTTPPathPrefix" + tailStr #http请求的网关地址，比如ssp-http，连接在http端口后面
      #      lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      # end
-     if arr[i + $start] =~/kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey/
+     if arr[i + $start].include? "kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey"
           newParameter = headStr + sinots_publickeyfile + middleStr + "kEnvConfig_NetWorkConfig_SoftCertificateVerSignPublickey" + tailStr #软证书验签公钥
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/PrivateAuthAddr/
+     if arr[i + $start].include? "PrivateAuthAddr"
           newParameter = headStr + privateAuthAddr + middleStr + "PrivateAuthAddr" + tailStr #idToken认证相关的Authorization地址
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/PrivateTokenAddr/
+     if arr[i + $start].include? "PrivateTokenAddr"
           newParameter = headStr + privateTokenAddr + middleStr + "PrivateTokenAddr" + tailStr #idToken认证相关的Token地址
           lines[i + $start - 1] = "" << $/
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/PrivateClientIdAddr/
+     if arr[i + $start].include? "PrivateClientIdAddr"
           newParameter = headStr + privateClientIdAddr + middleStr + "PrivateClientIdAddr" + tailStr #idToken认证相关的clientId
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/PrivateSecretAddr/
+     if arr[i + $start].include? "PrivateSecretAddr"
           newParameter = headStr + privateSecretAddr + middleStr + "PrivateSecretAddr" + tailStr #idToken认证相关的clientSecret
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/MstpSecretFile/
+     if arr[i + $start].include? "MstpSecretFile"
           newParameter = headStr + secretFileValue + middleStr + "MstpSecretFile" + tailStr #mstp se文件名
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/kEncConfig_NetWorkConfig_EnvMSTPPublicKey/
+     if arr[i + $start].include? "kEncConfig_NetWorkConfig_EnvMSTPPublicKey"
           newParameter = headStr + mstpPublicKey + middleStr + "kEncConfig_NetWorkConfig_EnvMSTPPublicKey" + tailStr #mstp 加密公钥串
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/HttpSecretFile/
+     if arr[i + $start].include? "HttpSecretFile"
           newParameter = headStr + secretFileValue + middleStr + "HttpSecretFile" + tailStr #http se文件名
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/kEncConfig_NetWorkConfig_EnvHTTPPublicKey/
+     if arr[i + $start].include? "kEncConfig_NetWorkConfig_EnvHTTPPublicKey"
           newParameter = headStr + httpPublicKey + middleStr + "kEncConfig_NetWorkConfig_EnvHTTPPublicKey" + tailStr #http加密公钥串
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/JwePublicBslKid/
+     if arr[i + $start].include? "JwePublicBslKid"
           newParameter = headStr + bsl_sinosun_sm2_kid + middleStr + "JwePublicBslKid" + tailStr #公有云 jwe 加密公钥ID
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/JwePublicBslKey/
+     if arr[i + $start].include? "JwePublicBslKey"
           newParameter = headStr + bsl_sinosun_sm2_public_key + middleStr + "JwePublicBslKey" + tailStr #公有云 jwe 加密公钥串
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/JwePrivateBslKid/
+     if arr[i + $start].include? "JwePrivateBslKid"
           newParameter = headStr + bsl_sm2_kid + middleStr + "JwePrivateBslKid" + tailStr #私有云 jwe 加密公钥ID
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
-     if arr[i + $start] =~/JwePrivateBslKey/
+     if arr[i + $start].include? "JwePrivateBslKey"
           newParameter = headStr + bsl_sm2_public_key + middleStr + "JwePrivateBslKey" + tailStr #私有云 jwe 加密公钥串
           lines[i + $start] = newParameter << $/ #将新的参数替换到对应的行中
      end
