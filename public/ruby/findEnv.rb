@@ -43,4 +43,4 @@ for value in array do
     end
  end
 
-puts string = array.join("-Env-")
+print string = array.join("-Env-")
