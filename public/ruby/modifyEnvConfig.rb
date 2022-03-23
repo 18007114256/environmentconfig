@@ -3,6 +3,7 @@
 require File.expand_path('../filecontrol',__FILE__)
 require File.expand_path('../tchat_add_fb',__FILE__)
 require File.expand_path('../replacefile',__FILE__)
+require 'find'
 require 'xcodeproj'
 
 envSrc = ARGV[0].dup          #环境配置文件地址
@@ -27,29 +28,53 @@ authServerUrl = ""      #域名端口
 secret = ""             #screct
 realm = ""              #realm
 resource = ""           ##idToken认证相关的clientId
-configFileArray = Dir::entries(envSrc)  #所有配置文件名称
 
-for fileName in configFileArray do
-     if (fileName.include? ".se") || (fileName.include? ".pem")
-          secretFileValue = (fileName.include? ".se") ? ('"' + fileName + '"') : ('"' + fileName.sub!("pem","se") + '"')
+filePathArray = []
+Find.find(envSrc) {|filePath|
+    if filePath.include? ".yml"
+          filePathArray << filePath
+    end
+    if (filePath.include? ".txt") && !(filePath.include? "readme") && !(filePath.include? "uuid")
+          filePathArray << filePath
+    end
+    if ((filePath.include? "param.pem") || (filePath.include? "param.se")) && !(filePath.include? "bplus")
+     if File.extname(filePath).include? ".pem"
+          newdir = File::dirname(filePath)
+          filename = File.basename(filePath, File.extname(filePath))
+          newPath = newdir + "/" + filename + '.se'
+          File.rename(filePath, newPath)
+          filePathArray << newPath
+      else
+          filePathArray << filePath
+      end
+    end
+    if (filePath.include? ".sinosun.com") && !(filePath.include? "token") && !(filePath.include? "mall") && !(filePath.include? "travel")
+          filePathArray << filePath
+    end
+}
+
+for filePath in filePathArray do
+     if (filePath.include? ".se") || (filePath.include? ".pem")
+          seFilePath = filePath
+          secretFileValue = (File::basename(filePath).include? ".se") ? ('"' + File::basename(filePath) + '"') : ('"' + File::basename(filePath).sub!("pem","se") + '"')
      end
-     if fileName.include? "mstp.sinosun.com"
-          mstpPublicKey = '"' + fileName + '"'
+     if filePath.include? "mstp.sinosun.com"
+          mstpPublicKey = '"' + File::basename(filePath) + '"'
      end
-     if fileName.include? "ts.sinosun.com"
-          httpPublicKey = '"' + fileName + '"'
+     if filePath.include? "ts.sinosun.com"
+          httpPublicKey = '"' + File::basename(filePath) + '"'
      end
-     if fileName.include? ".txt"
-          keyCloakConfigFile = fileName 
+     if filePath.include? ".txt"
+          keyCloakConfigFilePath = filePath 
      end
-     if fileName.include? ".yml"
-          ymlConfigFile = fileName 
+     if filePath.include? ".yml"
+          ymlConfigFilePath = filePath 
      end
 end
 
 
 #读取keyCloak配置文件中的参数
-IO.foreach(envSrc + '/' + keyCloakConfigFile) do |line|
+IO.foreach(keyCloakConfigFilePath) do |line|
      if (line.include? "auth-server-url") && authServerUrl.empty?
           authServerUrl = line.strip[line.index(":")..line.length].strip.chop
      end
@@ -63,7 +88,7 @@ IO.foreach(envSrc + '/' + keyCloakConfigFile) do |line|
           secret = line.strip[line.index(":")..line.length].strip
      end
 end
-# puts secretFileValue,mstpPublicKey,httpPublicKey,keyCloakConfigFile,ymlConfigFile,authServerUrl,secret,realm,resource
+
 
 #读取yml文件中的配置项
 tidValue = '' 							#AppTid
@@ -73,7 +98,7 @@ bsl_sinosun_sm2_kid 	= ''		# 兆日公有云 BSL 网关的 kid
 bsl_sinosun_sm2_public_key = ''	# 兆日公有云 BSL 网关的公钥
 bplus_public_domain 	= ''		# 访问公有云BPlus（商云），使用的域名
 sinots_publickeyfile	= ''		#安全键盘公钥加密串，软证书加密串
-IO.foreach(envSrc + '/' + ymlConfigFile) do |line|
+IO.foreach(ymlConfigFilePath) do |line|
      if (line.include? "tid") && tidValue.empty?
           tidValue = '"' + line.strip[line.index(":")+1..line.length].strip + '"'    #Apptid
      end
@@ -245,6 +270,6 @@ File.open(fullPath[0], 'w') { |f| f.write(lines.join) }
 puts "modify success!"
 
 addFileToProject = ReplaceFile.new
-addFileToProject.addFileToProject(envSrc,src)
+addFileToProject.addFileToProject(seFilePath,src)
 
 
