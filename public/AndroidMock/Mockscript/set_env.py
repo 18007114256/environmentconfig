@@ -158,6 +158,12 @@ modifyValue(mainApp_file, "ExtendConstants.PRIVATE_BSL_KID", bsl_sm2_kid)
 bsl_sm2_public_key = readFileValue(yml_file, "bsl_sm2_public_key:")
 modifyValue(mainApp_file, "ExtendConstants.PRIVATE_BSL_KEY", bsl_sm2_public_key)
 
+mstp_client_id = readFileValue(yml_file, "mstp_group_keycloak_resource:")
+modifyValue(mainApp_file, "ExtendConstants.MSTP_CLIENT_ID_ADDR", mstp_client_id)
+
+mstp_client_secret = readFileValue(yml_file, "mstp_group_keycloak_credentials_secret:")
+modifyValue(mainApp_file, "ExtendConstants.MSTP_SECRET_ADDR", mstp_client_secret)
+
 #读取包名
 #修改.gradle文件中的包名
 pName = readFileValue(yml_file, "android_package_name:")
