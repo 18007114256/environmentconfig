@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import xlrd
 
 #读取特定目录
 def getPath( rootPath, tagetPathName ):
@@ -301,4 +302,69 @@ modifyValue(mainApp_file, "ExtendConstants.PRIVATE_SECRET_ADDR", appclintSecret)
 modifyValue(mainApp_file, "ExtendConstants.PREVIEW_CLIENT_ID_ADDR", preview)
 modifyValue(mainApp_file, "ExtendConstants.PREVIEW_SECRET_ADDR", previewSecret)
 
+#读取xlsx文件
+for root, dirs, files in os.walk(sys.argv[1]):
+    for name in files:
+        if name.find(".xlsx") != -1:
+            print(os.path.join(root, name))
+            xlsx_file = os.path.join(root, name)
+            break
+
+# 读取小米，华为appid,appkey
+tchat_mi_appid = ""
+tchat_mi_appkey = ""
+tchat_huawei_appid = ""
+
+wb = xlrd.open_workbook(xlsx_file)#打开文件
+print(wb.sheet_names())#获取所有表格名字
+sheet1 = wb.sheet_by_index(0)#通过索引获取表格
+print(sheet1.name,sheet1.nrows,sheet1.ncols)
+for i in range(0, sheet1.nrows) :
+    for j in range(0, sheet1.ncols) :
+        if(str(sheet1.cell(i,j).value).find("huaweiPush_appId")) != -1 :
+            tchat_huawei_appid = str(round(sheet1.cell(i+1,j).value))
+        elif(str(sheet1.cell(i,j).value).find("xiaomiPush_appId")) != -1 :
+            tchat_mi_appid = str(sheet1.cell(i+1,j).value)
+        elif(str(sheet1.cell(i,j).value).find("xiaomiPush_appKey")) != -1 :
+            tchat_mi_appkey = str(sheet1.cell(i+1,j).value)
+print("tchat_huawei_appid = " + tchat_huawei_appid)
+print("tchat_mi_appid = " + tchat_mi_appid)
+print("tchat_mi_appkey = " + tchat_mi_appkey)
+# 修改strings.xml
+strings_path = getFile( src_env_path, "strings.xml" )
+
+#修改strings.xml中的特定值
+def modifyStringsValue( fileName, old, new ):
+    with open(fileName, "r", encoding="utf-8-sig") as f1:
+        fcontent = f1.readlines()
+        for line_num, line_content in enumerate(fcontent):
+            sub_str_index = line_content.find(old)
+            if sub_str_index != -1:
+                print("---在第{}行{}列".format(line_num, sub_str_index))
+                break
+    #读取指定行：
+    lines=[]
+    f=open(fileName,'r', encoding="utf-8-sig")  #your path!
+    for line in f:
+        lines.append(line)
+    f.close()
+    #替换值
+    data = lines[line_num]
+    result=[]
+    result = data.split("\">" , 2)
+    print(result)
+    if(result) :
+        lines[line_num] = lines[line_num].replace(result[1],new + "</string>\n")
+        print(lines[line_num])
+    #重新写入文件
+    s=''.join(lines)
+    f=open(fileName,'w+', encoding='utf-8')
+    f.write(s)
+    f.close()
+    del lines[:]                      #清空列表
+    del result[:]                      #清空列表
+    return
+modifyStringsValue(strings_path, "tchat_mi_appid", tchat_mi_appid)
+modifyStringsValue(strings_path, "tchat_mi_appkey", tchat_mi_appkey)
+modifyStringsValue(strings_path, "tchat_huawei_appid", tchat_huawei_appid)
 print("---set env end---")
